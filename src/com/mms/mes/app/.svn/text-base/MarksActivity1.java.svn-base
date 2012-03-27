@@ -1,0 +1,316 @@
+package com.logictree.school.app;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.ksoap2.serialization.SoapObject;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ViewFlipper;
+
+import com.logictree.school.R;
+import com.logictree.school.model.MarksInfo;
+import com.logictree.school.model.StudentInfo;
+import com.logictree.school.network.SoapServiceManager;
+
+public class MarksActivity1 extends Activity implements OnClickListener {
+	private static final String tag = "MarksActivity1";
+	protected static final String TAG = null;
+	private ViewFlipper flipper;
+	private LinearLayout loadLayout;
+	private LinearLayout nomarksLayout;
+	private Button prevButton;
+	private Button nextButton;
+	private Button shareButton;
+	private TextView studentName;
+	private TextView examName;
+	private MarksInfo marksObj;
+	private List<View> viewList;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.layout_marks);
+		initViews();
+		MihirApp app = (MihirApp) getApplication();
+		StudentInfo info = app.getCurStudent();
+		new MarksReqestTask().execute(String.valueOf(info.getStudentId()));
+		((TextView) findViewById(R.id.action_bar_tv_student_name)).setText(info
+				.getStudentName());
+	}
+
+	private void initViews() {
+		// TODO Auto-generated method stub
+		loadLayout = (LinearLayout) findViewById(R.id.loadLayout);
+		nomarksLayout = (LinearLayout) findViewById(R.id.Marks_layout_NodetailsLayout);
+		examName = (TextView) findViewById(R.id.layout_marks_btn_examName);
+		viewList = new ArrayList<View>();
+		shareButton = (Button) findViewById(R.id.marks_btn_share);
+		studentName = (TextView) findViewById(R.id.action_bar_tv_student_name);
+		shareButton.setOnClickListener(this);
+		flipper = (ViewFlipper) findViewById(R.id.viewFlipper2);
+		prevButton = (Button) findViewById(R.id.prevButton1);
+		nextButton = (Button) findViewById(R.id.nextButton1);
+		prevButton.setOnClickListener(MarksActivity1.this);
+		nextButton.setOnClickListener(MarksActivity1.this);
+		
+	}
+
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		switch (v.getId()) {
+		case R.id.prevButton1:
+			//nextButton.setEnabled(true);
+			nextButton.setVisibility(View.VISIBLE);
+			Log.v(tag, "When Previous Button Clicked");
+			int count = flipper.getChildCount();
+			int index = flipper.getDisplayedChild();
+			if (index + 2 == count) {
+				prevButton.setVisibility(View.INVISIBLE);
+				nextButton.setVisibility(View.VISIBLE);
+				// prevButton.setEnabled(false);
+			}
+			flipper.showNext();
+			setExamName();
+			break;
+		case R.id.nextButton1:
+			//prevButton.setEnabled(true);
+			prevButton.setVisibility(View.VISIBLE);
+			int count1 = flipper.getChildCount();
+			int index1 = flipper.getDisplayedChild();
+			if (index1 + (count1 - 1) == count1) {
+				nextButton.setVisibility(View.INVISIBLE);
+				prevButton.setVisibility(View.VISIBLE);
+
+			}
+
+			flipper.showPrevious();
+			setExamName();
+			break;
+
+		case R.id.marks_btn_share:
+			View v3 = viewList.get(flipper.getDisplayedChild());
+			
+			String name = "Student Name:\t"
+					+ studentName.getText().toString()
+					+ "\n"
+					+ "Exam Name\t"
+					+ ((TextView) v3
+							.findViewById(R.id.marks_textview_nameofexam))
+							.getText().toString()
+					+ "\n"
+					+ "Telugu\t"
+					+ ((TextView) v3
+							.findViewById(R.id.marks_textview_subject1marks))
+							.getText().toString()
+					+ "\n"
+					+ "English\t"
+					+ ((TextView) v3
+							.findViewById(R.id.marks_textview_subject2marks))
+							.getText().toString()
+					+ "\n"
+					+ "Hindi\t"
+					+ ((TextView) v3
+							.findViewById(R.id.marks_textview_subject3marks))
+							.getText().toString()
+					+ "\n"
+					+ "Mathematics\t"
+					+ ((TextView) v3
+							.findViewById(R.id.marks_textview_subject4marks))
+							.getText().toString()
+					+ "\n"
+					+ "Science\t"
+					+ ((TextView) v3
+							.findViewById(R.id.marks_textview_subject5marks))
+							.getText().toString()
+					+ "\n"
+					+ "Social\t"
+					+ ((TextView) v3
+							.findViewById(R.id.marks_textview_subject6marks))
+							.getText().toString() + "\n";
+			sendMail(this,name);
+
+			break;
+		}
+
+	}
+
+	public static void sendMail(Context context,String name) {
+		// TODO Auto-generated method stub
+		Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+		intent.putExtra(Intent.EXTRA_TEXT, name);
+		intent.setType("text/plain");
+		Intent.createChooser(intent, "Composing mail");
+		context.startActivity(intent);
+		
+	}
+
+	class MarksReqestTask extends AsyncTask<String, Boolean, SoapObject> {
+
+		@Override
+		protected SoapObject doInBackground(String... params) {
+
+			return getResponseObject(params[0]);
+		}
+
+		@Override
+		protected void onPostExecute(SoapObject result) {
+			super.onPostExecute(result);
+			loadLayout.setVisibility(View.GONE);
+			Log.v(TAG, "POST EXECUTE");
+			if (result != null) {
+				showMarksDetails(result);
+			} else {
+				Toast.makeText(MarksActivity1.this,
+						"Please Check your Internet Connection",
+						Toast.LENGTH_SHORT).show();
+			}
+
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+
+		}
+	}
+
+	private SoapObject getResponseObject(String studentId) {
+
+		SoapObject resultObject = SoapServiceManager
+				.sendstudentMarksRequest(Integer.parseInt(studentId));
+		return resultObject;
+	}
+
+	public void showMarksDetails(SoapObject result) {
+		// TODO Auto-generated method stub
+		List<MarksInfo> marksList = new ArrayList<MarksInfo>();
+		if (result.hasProperty("ERRORMSG")) {
+			if (result.getProperty("ERRORMSG").toString().equalsIgnoreCase(
+					"NO TERM DETAILS")) {
+				nomarksLayout.setVisibility(View.VISIBLE);
+				Log.v(TAG, result.getProperty("ERRORMSG").toString());
+				return;
+			}
+
+		} else if (result.hasProperty("Term")) {
+
+			String nameofStudent = result.getAttribute("StudentName")
+					.toString();
+			Log.v(TAG, "Student Name=" + nameofStudent);
+			Log.v(TAG, "Student Class is="
+					+ result.getAttribute("ClassName").toString());
+
+			int count = result.getPropertyCount();
+			for (int j = 0; j < count; j++) {
+				SoapObject termObject = (SoapObject) result.getProperty(j);
+				marksObj = new MarksInfo(termObject);
+				marksList.add(marksObj);
+			}
+			showDetails(marksList);
+		}
+
+	}
+
+	private void showDetails(List<MarksInfo> marksList) {
+
+		int size = marksList.size();
+
+		if (size == 1) {
+			prevButton.setVisibility(View.INVISIBLE);
+			nextButton.setVisibility(View.INVISIBLE);
+		}
+
+		for (int i = size - 1; i >= 0; i--) {
+			View v1 = getView(marksList.get(i));
+			viewList.add(v1);
+			flipper.addView(v1);
+		}
+
+		setExamName();
+
+	}
+
+	private void setExamName() {
+		// TODO Auto-generated method stub
+		TextView tv = (TextView) viewList.get(flipper.getDisplayedChild())
+				.findViewById(R.id.marks_textview_nameofexam);
+		examName.setText(tv.getText().toString());
+	}
+
+	private View getView(MarksInfo marks) {
+
+		View v = LayoutInflater.from(MarksActivity1.this).inflate(
+				R.layout.marks_list111, null);
+		((TextView) v.findViewById(R.id.marks_textview_nameofexam))
+				.setText(marks.getExamName());
+		
+		((TextView) v.findViewById(R.id.marks_textview_subject1)).setText(marks
+				.getSubject1());
+		((TextView) v.findViewById(R.id.marks_textview_subject2)).setText(marks
+				.getSubject2());
+		((TextView) v.findViewById(R.id.marks_textview_subject3)).setText(marks
+				.getSubject3());
+		((TextView) v.findViewById(R.id.marks_textview_subject4)).setText(marks
+				.getSubject4());
+		((TextView) v.findViewById(R.id.marks_textview_subject5)).setText(marks
+				.getSubject5());
+		((TextView) v.findViewById(R.id.marks_textview_subject6)).setText(marks
+				.getSubject6());
+		
+		((TextView) v.findViewById(R.id.marks_textview_subject1marks))
+				.setText(marks.getMarks1());
+		((TextView) v.findViewById(R.id.marks_textview_subject2marks))
+				.setText(marks.getMarks2());
+		((TextView) v.findViewById(R.id.marks_textview_subject3marks))
+				.setText(marks.getMarks3());
+		((TextView) v.findViewById(R.id.marks_textview_subject4marks))
+				.setText(marks.getMarks4());
+		((TextView) v.findViewById(R.id.marks_textview_subject5marks))
+				.setText(marks.getMarks5());
+		((TextView) v.findViewById(R.id.marks_textview_subject6marks))
+				.setText(marks.getMarks6());
+		
+		((TextView) v.findViewById(R.id.marks_textview_subject1_maxmarks))
+		.setText(marks.getMaxMarks1());
+		((TextView) v.findViewById(R.id.marks_textview_subject2_maxmarks))
+		.setText(marks.getMaxMarks2());
+		((TextView) v.findViewById(R.id.marks_textview_subject3_maxmarks))
+		.setText(marks.getMaxMarks3());
+		((TextView) v.findViewById(R.id.marks_textview_subject4_maxmarks))
+		.setText(marks.getMaxMarks4());
+		((TextView) v.findViewById(R.id.marks_textview_subject5_maxmarks))
+		.setText(marks.getMaxMarks5());
+		((TextView) v.findViewById(R.id.marks_textview_subject6_maxmarks))
+		.setText(marks.getMaxMarks6());
+		
+		
+		((TextView) v.findViewById(R.id.marks_textview_subject1grade))
+				.setText(marks.getGrade1());
+		((TextView) v.findViewById(R.id.marks_textview_subject2grade))
+				.setText(marks.getGrade2());
+		((TextView) v.findViewById(R.id.marks_textview_subject3grade))
+				.setText(marks.getGrade3());
+		((TextView) v.findViewById(R.id.marks_textview_subject4grade))
+				.setText(marks.getGrade4());
+		((TextView) v.findViewById(R.id.marks_textview_subject5grade))
+				.setText(marks.getGrade5());
+		((TextView) v.findViewById(R.id.marks_textview_subject6grade))
+				.setText(marks.getGrade6());
+		return v;
+	}
+
+}

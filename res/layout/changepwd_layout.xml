@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/list_bg"
+    android:orientation="vertical" >
+
+    <include layout="@layout/action_bar" >
+    </include>
+
+    <TextView
+        android:id="@+id/action_bar_tv_student_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:layout_marginTop="5dip"
+        android:gravity="center"
+        android:text="Student Name"
+        android:textColor="#ffff00"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="visible" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/action_bar_tv_class_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Class"
+            android:textColor="#ffff00"
+            android:textStyle="bold"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/action_bar_tv_section_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:text="Section"
+            android:textColor="#ffff00"
+            android:textStyle="bold"
+            android:visibility="visible" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="15dip"
+        android:layout_marginTop="5dip"
+        android:background="@drawable/heading_bg"
+        android:gravity="center"
+        android:text="CHANGE PASSWORD"
+        android:textColor="#ffffff"
+        android:textSize="15sp"
+        android:textStyle="bold" >
+    </TextView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" >
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dip"
+            android:layout_marginRight="15dip" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_shadow" >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/book_bg_transparency" >
+
+                    <EditText
+                        android:id="@+id/changepwd_edittext_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="MMS ID"
+                        android:maxLines="1"
+                        android:singleLine="true" />
+
+                    <EditText
+                        android:id="@+id/change_pwd_edittext_oldpwd"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/changepwd_edittext_email"
+                        android:hint="Old Password"
+                        android:maxLines="1"
+                        android:password="true"
+                        android:singleLine="true" />
+
+                    <EditText
+                        android:id="@+id/change_pwd_edittext_newpwd"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/change_pwd_edittext_oldpwd"
+                        android:hint="New Password"
+                        android:maxLines="1"
+                        android:password="true"
+                        android:singleLine="true" />
+
+                    <EditText
+                        android:id="@+id/change_pwd_edittext_confpwd"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/change_pwd_edittext_newpwd"
+                        android:hint="Confirm Password"
+                        android:maxLines="1"
+                        android:password="true"
+                        android:singleLine="true" />
+
+                    <Button
+                        android:id="@+id/change_pwd_btn_change"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_below="@+id/change_pwd_edittext_confpwd"
+                        android:layout_centerHorizontal="true"
+                        android:background="@drawable/btn_default_1"
+                        android:gravity="center"
+                        android:text="Update"
+                        android:textColor="#ffffff"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="30px"
+        android:layout_gravity="bottom"
+        layout="@layout/mms_ad" />
+
+</LinearLayout>

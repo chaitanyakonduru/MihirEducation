@@ -1,0 +1,61 @@
+package com.logictree.school.custom;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.content.Context;
+import android.content.Intent;
+import android.sax.StartElementListener;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
+
+import com.logictree.school.R;
+import com.logictree.school.app.NotificationsDetailsActivity;
+import com.logictree.school.model.Events;
+
+public class MyAdapter1 extends ArrayAdapter<Events> {
+
+	private Context context;
+	private List<Events> events=new ArrayList<Events>();
+	
+	public MyAdapter1(Context context, int textViewResourceId,List<Events> ll) {
+		super(context, textViewResourceId,ll);
+
+		this.context=context;
+		this.events=ll;
+		
+	}
+
+	public int getCount() {
+		return events.size();
+	}
+
+	public long getItemId(int position) {
+		return position;
+	}
+
+	public View getView(int position, View convertView, ViewGroup parent) {
+	final Events event=events.get(position);
+	
+		convertView=LayoutInflater.from(context).inflate(R.layout.list_layout_notifications, null);
+		
+		((TextView)convertView.findViewById(R.id.list_layout_tv_eventtitle)).setText(events.get(position).getEventTitle());
+		((TextView)convertView.findViewById(R.id.list_layout_tv_date)).setText(events.get(position).getEventDate());
+		((TextView)convertView.findViewById(R.id.list_layout_tv_greaterthan)).setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent=new Intent(context,NotificationsDetailsActivity.class);
+				intent.putExtra("from", 1);
+				intent.putExtra("myObject",event);
+				context.startActivity(intent);
+				}
+		});
+		return convertView;
+	}
+	
+}

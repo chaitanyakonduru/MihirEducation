@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World!</string>
+    <string name="app_name">Mihir</string>
+    <string name="home_marks">MARKS</string>
+    <string name="home_attendance">ATTENDANCE</string>
+    <string name="home_notifi_evetns">EVENTS</string>
+    <string name="home_Assignments">ASSIGNMENTS</string>
+    <string name="home_antiragging">ANTIRAGGING</string>
+    <string name="home_canteen">CANTEEN</string>
+    <string name="home_myaccount">MY ACCOUNT</string>
+    <string name="home_emergency">IMP.INFO</string>
+    <string name="empty_children">No children found</string>
+   <string name="det_not_available">This feature is currently not available for this subscriber. Please contact <a href="info@mihirmobile.com">info@mihirmibile.com</a> for details</string>
+   <string name="hint_canteen">No Items added yet \n Tap on Plus to add</string>
+   
+</resources>

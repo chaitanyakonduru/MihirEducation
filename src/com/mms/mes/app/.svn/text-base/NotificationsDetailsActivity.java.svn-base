@@ -1,0 +1,52 @@
+package com.logictree.school.app;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
+
+import com.logictree.school.R;
+import com.logictree.school.model.Events;
+import com.logictree.school.model.Notifications;
+
+public class NotificationsDetailsActivity extends Activity {
+
+	private static final String tag = "Notification Details";
+	private Notifications notifications;
+	private Events events;
+	private TextView textView;
+	private TextView studentname;
+	private static String description;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		
+		setContentView(R.layout.layout_notifications_details);
+		Bundle bundle=getIntent().getExtras();
+		studentname = (TextView) findViewById(R.id.action_bar_tv_student_name);
+		studentname.setVisibility(View.VISIBLE);
+		studentname.setText(HomeActivity.studentname);
+		if(bundle!=null)
+		{
+			int i=bundle.getInt("from");
+			Log.v(tag, ""+i);
+			if(i==0)
+			{
+				this.notifications=bundle.getParcelable("myObject");
+				description=notifications.getNotificationDescription();
+			}
+			else if (i==1)
+			{
+				this.events=bundle.getParcelable("myObject");
+				description=events.getEventDescription();
+			}
+		}
+		textView=(TextView) findViewById(R.id.notification_details_tv_description);
+		textView.setText(description);
+		
+	}
+
+}

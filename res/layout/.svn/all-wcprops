@@ -1,0 +1,179 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/Mobile/!svn/ver/1276/Android/MihirEducation/res/layout
+END
+show_canteen_nameslayout.xml
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/Mobile/!svn/ver/1260/Android/MihirEducation/res/layout/show_canteen_nameslayout.xml
+END
+layout_attendance.xml
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/Mobile/!svn/ver/1295/Android/MihirEducation/res/layout/layout_attendance.xml
+END
+parent_screen.xml
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/Mobile/!svn/ver/1295/Android/MihirEducation/res/layout/parent_screen.xml
+END
+splash.xml
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/Mobile/!svn/ver/1260/Android/MihirEducation/res/layout/splash.xml
+END
+layout_myaccount.xml
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/Mobile/!svn/ver/1295/Android/MihirEducation/res/layout/layout_myaccount.xml
+END
+antiragging_name_layout.xml
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/Mobile/!svn/ver/1295/Android/MihirEducation/res/layout/antiragging_name_layout.xml
+END
+layout_marks.xml
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/Mobile/!svn/ver/1301/Android/MihirEducation/res/layout/layout_marks.xml
+END
+layout_addview.xml
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/Mobile/!svn/ver/1279/Android/MihirEducation/res/layout/layout_addview.xml
+END
+layout_assignments.xml
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/Mobile/!svn/ver/1298/Android/MihirEducation/res/layout/layout_assignments.xml
+END
+attendanceflip_layout.xml
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/Mobile/!svn/ver/1295/Android/MihirEducation/res/layout/attendanceflip_layout.xml
+END
+layout_change_password.xml
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/Mobile/!svn/ver/1301/Android/MihirEducation/res/layout/layout_change_password.xml
+END
+canteen_layout_showcanteen_names.xml
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/Mobile/!svn/ver/1301/Android/MihirEducation/res/layout/canteen_layout_showcanteen_names.xml
+END
+marks_list111.xml
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/Mobile/!svn/ver/1295/Android/MihirEducation/res/layout/marks_list111.xml
+END
+layout_emergency.xml
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/Mobile/!svn/ver/1295/Android/MihirEducation/res/layout/layout_emergency.xml
+END
+layout_antiragging.xml
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/Mobile/!svn/ver/1301/Android/MihirEducation/res/layout/layout_antiragging.xml
+END
+canteen_layout_menu.xml
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/Mobile/!svn/ver/1291/Android/MihirEducation/res/layout/canteen_layout_menu.xml
+END
+canteen_layout_menu_items.xml
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/Mobile/!svn/ver/1301/Android/MihirEducation/res/layout/canteen_layout_menu_items.xml
+END
+layout_assignment_details.xml
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/Mobile/!svn/ver/1295/Android/MihirEducation/res/layout/layout_assignment_details.xml
+END
+action_bar.xml
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/Mobile/!svn/ver/1295/Android/MihirEducation/res/layout/action_bar.xml
+END
+layout_signup.xml
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/Mobile/!svn/ver/1295/Android/MihirEducation/res/layout/layout_signup.xml
+END
+layout_events.xml
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/Mobile/!svn/ver/1291/Android/MihirEducation/res/layout/layout_events.xml
+END
+canteen_layout_ordered_items.xml
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/Mobile/!svn/ver/1291/Android/MihirEducation/res/layout/canteen_layout_ordered_items.xml
+END
+layout_notifications.xml
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/Mobile/!svn/ver/1301/Android/MihirEducation/res/layout/layout_notifications.xml
+END
+layout_home.xml
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/Mobile/!svn/ver/1295/Android/MihirEducation/res/layout/layout_home.xml
+END
+layout_login.xml
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/Mobile/!svn/ver/1301/Android/MihirEducation/res/layout/layout_login.xml
+END
+list_layout_notifications.xml
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/Mobile/!svn/ver/1291/Android/MihirEducation/res/layout/list_layout_notifications.xml
+END
+list_layout_login.xml
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/Mobile/!svn/ver/1301/Android/MihirEducation/res/layout/list_layout_login.xml
+END
+layout_canteen.xml
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/Mobile/!svn/ver/1301/Android/MihirEducation/res/layout/layout_canteen.xml
+END
+layout_notifications_details.xml
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/Mobile/!svn/ver/1301/Android/MihirEducation/res/layout/layout_notifications_details.xml
+END

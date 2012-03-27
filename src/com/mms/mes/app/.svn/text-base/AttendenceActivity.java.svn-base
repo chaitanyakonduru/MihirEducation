@@ -1,0 +1,241 @@
+package com.logictree.school.app;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.ksoap2.serialization.SoapObject;
+
+import android.app.Activity;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ViewFlipper;
+
+import com.logictree.school.R;
+import com.logictree.school.model.AttendanceInfo;
+import com.logictree.school.model.StudentInfo;
+import com.logictree.school.network.SoapServiceManager;
+
+public class AttendenceActivity extends Activity implements OnClickListener {
+
+	private static final String TAG = "AttendanceActivity";
+	private TextView studentname;
+
+	private LinearLayout loadLayout;
+	private Button prevButton;
+	private Button nextButton;
+	private ViewFlipper flipper;
+	private List<View> viewList;
+	private StudentInfo info;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.layout_attendance);
+		
+		MihirApp app = (MihirApp) getApplication();
+		info = app.getCurStudent();
+		init();
+		findViewById(R.id.attendance_btn_sharebtn).setOnClickListener(this);
+
+		new attendanceRequestTask().execute(info.getStudentId());
+
+	}
+
+	private void sendMail() {
+		View view = viewList.get(flipper.getDisplayedChild());
+		String name = "Student Name :\t"
+			+ info.getStudentName()
+			+ "\n"
+			+ "Month Name: \t"
+			+ ((TextView) view
+					.findViewById(R.id.attendance_tv_nameofmonth))
+					.getText().toString()
+			+ "\n"
+			+ "No. of Working Days :\t"
+			+ ((TextView) view
+					.findViewById(R.id.attendance_tv_no_of_workingdays))
+					.getText().toString()
+			+ "\n"
+			+ "No.of Present Days :\t"
+			+ ((TextView) view
+					.findViewById(R.id.attendance_tv_no_of_presentdays))
+					.getText().toString()
+			+ "\n"
+			+ "No.of Absent Days :\t"
+			+ ((TextView) view
+					.findViewById(R.id.attendance_tv_no_of_absentdays))
+					.getText().toString()
+			+ "\n"
+			+ "Attendance Percentage :\t"
+					+ "\n";
+		
+		MarksActivity1.sendMail(this, name);
+		finish();
+		
+	}
+
+	private void init() {
+
+		studentname = (TextView) findViewById(R.id.action_bar_tv_student_name);
+		studentname.setText(info.getStudentName());
+		prevButton = (Button) findViewById(R.id.attendance_btn_prevButton);
+		prevButton.setOnClickListener(AttendenceActivity.this);
+		nextButton = (Button) findViewById(R.id.attendance_btn_nextButton);
+		nextButton.setOnClickListener(AttendenceActivity.this);
+		flipper = (ViewFlipper) findViewById(R.id.attendance_view_flipper);
+		loadLayout = (LinearLayout) findViewById(R.id.attendance_ll_loading);
+
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.attendance_btn_sharebtn:
+			sendMail();
+
+			break;
+		case R.id.attendance_btn_prevButton:
+			// nextButton.setEnabled(true);
+			nextButton.setVisibility(View.VISIBLE);
+			Log.v(TAG, "When Previous Button Clicked");
+			int count = flipper.getChildCount();
+			int index = flipper.getDisplayedChild();
+			if (index + 2 == count) {
+				prevButton.setVisibility(View.INVISIBLE);
+				nextButton.setVisibility(View.VISIBLE);
+			}
+			flipper.showNext();
+			setMonthName();
+			break;
+		case R.id.attendance_btn_nextButton:
+			prevButton.setVisibility(View.VISIBLE);
+			int count1 = flipper.getChildCount();
+			int index1 = flipper.getDisplayedChild();
+			if (index1 + (count1 - 1) == count1) {
+				nextButton.setVisibility(View.INVISIBLE);
+				prevButton.setVisibility(View.VISIBLE);
+
+			}
+
+			flipper.showPrevious();
+			setMonthName();
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	class attendanceRequestTask extends AsyncTask<String, Boolean, SoapObject> {
+
+		@Override
+		protected SoapObject doInBackground(String... params) {
+			return getResultObject(params[0]);
+		}
+
+		@Override
+		protected void onPostExecute(SoapObject result) {
+			super.onPostExecute(result);
+			hideProgress();
+			if (result != null) {
+				processingResultObject(result);
+			} else {
+				Toast.makeText(AttendenceActivity.this, "Network Error",
+						Toast.LENGTH_SHORT).show();
+			}
+		}
+
+		protected void onPreExecute() {
+			super.onPreExecute();
+			showProgress();
+		}
+
+	}
+
+	public SoapObject getResultObject(String student_Id) {
+
+		SoapObject resultObject = SoapServiceManager
+				.sendAttendanceRequest(student_Id);
+		return resultObject;
+	}
+
+	public void processingResultObject(SoapObject result) {
+		AttendanceInfo attendanceInfo;
+		List<AttendanceInfo> list = new ArrayList<AttendanceInfo>();
+		if (result.hasProperty("Student")) {
+			SoapObject obj = (SoapObject) result.getProperty("Student");
+			Log.v(TAG, obj.toString());
+			int count = obj.getPropertyCount();
+			for (int j = 0; j < count; j++) {
+				SoapObject object = (SoapObject) obj.getProperty(j);
+				attendanceInfo = new AttendanceInfo(object);
+				list.add(attendanceInfo);
+
+			}
+			showDetails(list);
+		} else if (result.hasProperty("StudentResponseMSG")) {
+			findViewById(R.id.attendance_ll_no_details).setVisibility(
+					View.VISIBLE);
+
+		}
+	}
+
+	private void showDetails(List<AttendanceInfo> attendanceList) {
+
+		int size = attendanceList.size();
+		viewList = new ArrayList<View>();
+
+		if (size == 1) {
+			prevButton.setVisibility(View.INVISIBLE);
+			nextButton.setVisibility(View.INVISIBLE);
+		}
+
+		for (int i = size - 1; i >= 0; i--) {
+			View v1 = getView(attendanceList.get(i));
+			viewList.add(v1);
+			flipper.addView(v1);
+		}
+		setMonthName();
+
+	}
+
+	private void setMonthName() {
+		TextView tv = (TextView) viewList.get(flipper.getDisplayedChild())
+				.findViewById(R.id.attendance_tv_nameofmonth);
+		((TextView) findViewById(R.id.layout_attendance_tv_monthName))
+				.setText(tv.getText().toString());
+	}
+
+	private View getView(AttendanceInfo attendanceInfo) {
+
+		View v = LayoutInflater.from(AttendenceActivity.this).inflate(
+				R.layout.attendanceflip_layout, null);
+		((TextView) v.findViewById(R.id.attendance_tv_nameofmonth))
+				.setText(attendanceInfo.getMonthName());
+
+		((TextView) v.findViewById(R.id.attendance_tv_no_of_workingdays))
+				.setText(attendanceInfo.getNo_of_workingdays());
+		((TextView) v.findViewById(R.id.attendance_tv_no_of_presentdays))
+				.setText(attendanceInfo.getNo_of_presentdays());
+		((TextView) v.findViewById(R.id.attendance_tv_no_of_absentdays))
+				.setText(attendanceInfo.getNo_of_absentdays());
+		return v;
+	}
+
+	public void showProgress() {
+		loadLayout.setVisibility(View.VISIBLE);
+
+	}
+
+	public void hideProgress() {
+		loadLayout.setVisibility(View.GONE);
+	}
+}

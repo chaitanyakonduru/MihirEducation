@@ -1,0 +1,87 @@
+package com.logictree.school.model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Events implements Parcelable {
+private String eventTitle;
+private String eventDate;
+private String eventDescription;
+
+
+
+
+public Events(String eventTitle, String eventDate, String eventDescription) {
+	super();
+	this.eventTitle = eventTitle;
+	this.eventDate = eventDate;
+	this.eventDescription = eventDescription;
+}
+
+public String getEventTitle() {
+	return eventTitle;
+}
+public void setEventTitle(String eventTitle) {
+	this.eventTitle = eventTitle;
+}
+public String getEventDate() {
+	return eventDate;
+}
+public void setEventDate(String eventDate) {
+	this.eventDate = eventDate;
+}
+public String getEventDescription() {
+	return eventDescription;
+}
+public void setEventDescription(String eventDescription) {
+	this.eventDescription = eventDescription;
+}
+
+@Override
+public int describeContents() {
+	// TODO Auto-generated method stub
+	return 0;
+}
+
+@Override
+public void writeToParcel(Parcel dest, int flags) {
+
+	List<String> ll=new ArrayList<String>();
+	ll.add(this.eventTitle);
+	ll.add(this.eventDate);
+	ll.add(eventDescription);
+	dest.writeStringList(ll);	
+	
+}
+
+public Events(Parcel parcel)
+{
+	List<String>list1=new ArrayList<String>();
+	parcel.readStringList(list1);
+	this.eventTitle=list1.get(0);
+	this.eventDate=list1.get(1);
+	this.eventDescription=list1.get(2);
+	
+}
+
+public static final Creator<Events> CREATOR=new Creator<Events>() {
+
+	@Override
+	public Events createFromParcel(Parcel source) {
+		// TODO Auto-generated method stub
+		return new Events(source);
+	}
+
+	@Override
+	public Events[] newArray(int size) {
+		// TODO Auto-generated method stub
+		return new Events[size];
+	}
+};
+public static Creator<Events> getCreator() {
+	return CREATOR;
+}
+}

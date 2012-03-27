@@ -1,0 +1,47 @@
+package com.logictree.school.model;
+
+import org.ksoap2.serialization.SoapObject;
+
+import android.util.Log;
+
+public class AttendanceInfo {
+	
+	private static final String TAG = "AttendanceInfo";
+	public AttendanceInfo(SoapObject object)
+	{	if(object.hasProperty("WorkingDays"))
+		{
+			this.no_of_workingdays=object.getPropertyAsString("WorkingDays");
+			Log.v(TAG, no_of_workingdays);
+		}
+		if(object.hasProperty("AbsentDays"))
+		{
+			this.no_of_absentdays=object.getPropertyAsString("AbsentDays");
+			Log.v(TAG, no_of_absentdays);
+		}
+		if(object.hasAttribute("monthname"))
+		{
+			this.monthName=object.getAttributeAsString("monthname");
+			Log.v(TAG, object.getAttributeAsString("monthname"));
+		}
+	}
+	public String getNo_of_workingdays() {
+		return no_of_workingdays;
+	}
+	public String getNo_of_absentdays() {
+		return no_of_absentdays;
+	}
+	public String getNo_of_presentdays()
+	{
+		no_of_presentdays=String.valueOf(Integer.parseInt(no_of_workingdays)-Integer.parseInt(no_of_absentdays));
+		return no_of_presentdays ;
+	}
+	public String getMonthName()
+	{
+		return monthName;
+	}
+
+	private String no_of_absentdays;
+	private String no_of_workingdays;
+	private String no_of_presentdays;
+	private String monthName;
+}

@@ -1,0 +1,139 @@
+package com.logictree.school.app;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.ksoap2.serialization.SoapObject;
+
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
+
+import com.logictree.school.R;
+import com.logictree.school.model.CanteenNames;
+import com.logictree.school.network.SoapServiceManager;
+
+public class FindCanteenActivity extends Activity implements OnItemClickListener{
+
+	private findCanteenAsynchTask asynchTask;
+	private SoapObject responseObject;
+	private static boolean responseStatus = false;
+	private ProgressDialog dialog;
+	private static final String TAG = "FindCanteenActivity";
+	private CanteenNames canteenNames;
+	private List<CanteenNames> listcanteenNames;
+	private ListView listView;
+	private TextView studentname;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.canteen_layout_showcanteen_names);
+		listView=(ListView) findViewById(android.R.id.list);
+		studentname = (TextView) findViewById(R.id.action_bar_tv_student_name);
+		studentname.setVisibility(View.VISIBLE);
+		studentname.setText(HomeActivity.studentname);
+		asynchTask = (findCanteenAsynchTask) new findCanteenAsynchTask()
+				.execute(String.valueOf(1), String.valueOf(1));
+
+	}
+
+	class findCanteenAsynchTask extends AsyncTask<String, Boolean, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(String... params) {
+
+			return getResponseObject(params[0], params[1]);
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			Log.v(TAG, "POST EXECUTE");
+			dialog.dismiss();
+			if (responseStatus == true) {
+				showCanteens();
+			}
+			
+
+		}
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+			dialog = new ProgressDialog(FindCanteenActivity.this);
+			dialog.setMessage("Searching Canteens....");
+			dialog.show();
+		}
+
+	}
+
+	public Boolean getResponseObject(String std_id, String contact_id) {
+
+		responseObject = SoapServiceManager.sendFindCanteenRequest(std_id,
+				contact_id);
+		if (responseObject != null) {
+			responseStatus = true;
+			return responseStatus;
+		} else {
+			responseStatus = false;
+			return responseStatus;
+		}
+	}
+
+	public void showCanteens() {
+		
+		listcanteenNames=new ArrayList<CanteenNames>();
+		// TODO Auto-generated method stub
+		if (responseObject.hasProperty("StudentSchool")) {
+			SoapObject object = (SoapObject) responseObject
+					.getProperty("StudentSchool");
+			if (object.hasProperty("Canteens")) {
+				SoapObject object3 = (SoapObject) object.getProperty("Canteens");
+				int count = object3.getPropertyCount();
+				for (int i = 0; i < count; i++) {
+					SoapObject obj4 = (SoapObject) object3.getProperty(i);
+					canteenNames=new CanteenNames(obj4);
+					listcanteenNames.add(canteenNames);
+					Log.v(TAG, "Canteen ID"+obj4.getProperty("CanteenID").toString());
+					Log.v(TAG, "Canteen Name"+obj4.getProperty("CanteenName").toString());
+
+				}
+			}
+
+		}
+	
+		if(listcanteenNames!=null)
+		{
+			if(listcanteenNames.size()>0)
+			{
+				ArrayAdapter<CanteenNames> adapter=new ArrayAdapter<CanteenNames>(FindCanteenActivity.this, android.R.layout.simple_list_item_1,listcanteenNames);
+				listView.setAdapter(adapter);
+				listView.setOnItemClickListener(FindCanteenActivity.this);
+			}
+		}
+		
+
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long arg3) {
+		// TODO Auto-generated method stub
+		String id=listcanteenNames.get(pos).getCanteenId();
+		Intent intent=new Intent(FindCanteenActivity.this,Canteenactivity.class);
+		intent.putExtra("CanteenId", id);
+		startActivity(intent);
+	}
+
+}

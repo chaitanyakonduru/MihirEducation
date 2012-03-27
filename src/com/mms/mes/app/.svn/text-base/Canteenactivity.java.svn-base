@@ -1,0 +1,313 @@
+package com.logictree.school.app;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.ksoap2.serialization.SoapObject;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.logictree.school.R;
+import com.logictree.school.model.Item;
+import com.logictree.school.model.MenuItem;
+import com.logictree.school.network.SoapServiceManager;
+
+public class Canteenactivity extends Activity implements OnClickListener {
+
+	private static final String TAG = "Canteen1 Activity";
+	private int j = 1;
+	private List<View> viewList;
+
+	private List<Item> myListItems;
+	private Item item = null;
+	private Button orderButton;
+	private LinearLayout mlayout;
+	public ProgressDialog progressDialog;
+	private ImageButton plusButton;
+	private String canteen_ID;
+	private SoapObject responseObject;
+	private MenuItem menu;
+
+	private List<MenuItem> menuItemList;
+	private ViewCanteenMenuAsynchTask asynchTask;
+	public boolean responseStatus = false;
+	private TextView studentname;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.layout_canteen);
+
+		Bundle bundle = getIntent().getExtras();
+		if (bundle != null) {
+			canteen_ID = bundle.getString("CanteenId");
+			if(canteen_ID == null){
+				
+			}
+		}
+		
+		initViews();
+		Log.v(TAG, "" + canteen_ID);
+		
+	}
+	private void initViews(){
+		plusButton = (ImageButton) findViewById(R.id.canteen1_btn_additems);
+		plusButton.setVisibility(View.INVISIBLE);
+		((Button) findViewById(R.id.canteen_btn_order)).setOnClickListener(this);
+		mlayout = (LinearLayout) findViewById(R.id.linearLayout1234);
+		asynchTask = (ViewCanteenMenuAsynchTask) new ViewCanteenMenuAsynchTask();
+		asynchTask.execute(HomeActivity.student_Id, canteen_ID);
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		
+		case R.id.canteen1_btn_additems:
+			showItems();
+			break;
+		case R.id.canteen_btn_order:
+			Log.v(TAG, "When Order Button Clikced");
+			new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					SoapServiceManager.orderCanteenItems(1, 1, 1, 1, "comment for u");
+					
+				}
+			}).start();
+			break;
+
+		case R.id.canteen_btn_close:
+			mlayout.removeView((View) v.getParent());
+			break;
+		case R.id.canteen_btn_qty:
+			final Button qty_items = (Button) v
+					.findViewById(R.id.canteen_btn_qty);
+			AlertDialog.Builder builder1 = new Builder(Canteenactivity.this);
+			builder1.setTitle("Select Qty");
+
+			builder1.setItems(R.array.quantity_items,
+					new DialogInterface.OnClickListener() {
+
+						public void onClick(DialogInterface dialog, int which) {
+
+							String[] items = getResources().getStringArray(
+									R.array.quantity_items);
+							qty_items.setText(items[which]);
+						}
+					});
+			builder1.show();
+
+		default:
+			break;
+		}
+	}
+
+	private void showItems() {
+
+		menuItemList = new ArrayList<MenuItem>();
+		Log.v(TAG, responseObject.toString());
+		if (responseObject.hasProperty("Canteen")) {
+			SoapObject count = (SoapObject) ((SoapObject) responseObject
+					.getProperty("Canteen")).getProperty("Menu");
+			int count1 = count.getPropertyCount();
+			for (int i = 0; i < count1; i++) {
+				SoapObject object = (SoapObject) count.getProperty(i);
+				menu = new MenuItem(object);
+				menuItemList.add(menu);
+				Log.v(TAG, object.getProperty("ItemID").toString());
+			}
+
+		}
+		
+		if (menuItemList != null && menuItemList.size()>0)
+		{
+			showMenuDialog();
+		}
+		else
+		{
+			Toast.makeText(Canteenactivity.this, "NO Items", Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	private void showMenuDialog() {
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			View v = getLayoutInflater().inflate(R.layout.canteen_layout_menu,
+					null);
+			LinearLayout layout = (LinearLayout) v
+					.findViewById(R.id.canteen_layout_itemsnames);
+
+			int size = menuItemList.size();
+			viewList = new ArrayList<View>();
+			for (int i = 0; i < size; i++) {
+				MenuItem menu = menuItemList.get(i);
+				View v1 = getLayoutInflater().inflate(
+						R.layout.canteen_layout_menu_items, null);
+				layout.addView(v1);
+				v1.setTag(i);
+				viewList.add(v1);
+				TextView textView = (TextView) v1
+						.findViewById(R.id.canteen_tv_itemname);
+				textView.setText(menu.getItemDescription());
+
+				((TextView) v1.findViewById(R.id.canteen_tv_itemprice))
+						.setText(menu.getItemPrice());
+
+			/*	EditText qty_items = (EditText) v1
+						.findViewById(R.id.canteen_btn_qty);
+
+				qty_items.setOnClickListener(Canteenactivity.this);*/
+				
+			}
+
+			builder.setView(v);
+			builder.create();
+			builder.setPositiveButton("Ok",
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							myListItems = new ArrayList<Item>();
+
+							for (int i = 0; i < menuItemList.size(); i++) {
+								if (viewList.get(i) != null) {
+									View v = viewList.get(i);
+									String itemName = ((TextView) v
+											.findViewById(R.id.canteen_tv_itemname))
+											.getText().toString();
+									String quantity = ((EditText) v
+											.findViewById(R.id.canteen_btn_qty))
+											.getText().toString();
+									String price = ((TextView) v
+											.findViewById(R.id.canteen_tv_itemprice))
+											.getText().toString();
+								
+									if (quantity.equalsIgnoreCase("0")
+											|| quantity.equalsIgnoreCase("")) {
+										// doNothing
+									} else {
+
+										item = new Item();
+										item.setItemName(itemName);
+										item.setQuantity(quantity);
+										item.setPrice(price);
+										myListItems.add(item);
+
+									}
+								}
+							}
+
+							if (myListItems.size() > 0 && myListItems != null) {
+								send(myListItems.size());
+							}
+
+						}
+
+					});
+			builder.setNegativeButton("Cancel",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+
+						}
+					});
+			builder.show();
+		
+	}
+
+	private void send(int size) {
+		//orderButton.setEnabled(true);
+		for (int i = 0; i < size; i++) {
+
+			View v = getLayoutInflater().inflate(
+					R.layout.canteen_layout_ordered_items, null);
+			TextView iname = (TextView) v
+					.findViewById(R.id.canteen_tv_itemname1);
+			TextView qty = (TextView) v.findViewById(R.id.canteen_tv_quantity1);
+			TextView totPrice = (TextView) v
+					.findViewById(R.id.canteen_tv_totPrice);
+			Button closeButton = (Button) v
+					.findViewById(R.id.canteen_btn_close);
+
+			Item item = myListItems.get(i);
+			iname.setText(item.getItemName());
+			qty.setText(item.getQuantity());
+			float f = Float.parseFloat(item.getPrice())
+					* Integer.parseInt(item.getQuantity());
+			totPrice.setText(String.valueOf(Math.round(f)));
+			mlayout.addView(v);
+			closeButton.setTag(j);
+			j++;
+			closeButton.setOnClickListener(Canteenactivity.this);
+		}
+	}
+
+	class ViewCanteenMenuAsynchTask extends AsyncTask<String, Boolean, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(String... params) {
+
+			return getResponseObject(params[0], params[1]);
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			Log.v(TAG, "POST EXECUTE");
+			progressDialog.dismiss();
+
+			if (result) {
+				plusButton.setVisibility(View.VISIBLE);
+				plusButton.setOnClickListener(Canteenactivity.this);
+
+			} else {
+				plusButton.setVisibility(View.INVISIBLE);
+			}
+
+		}
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+			progressDialog = new ProgressDialog(Canteenactivity.this);
+			progressDialog.setMessage("Loading Items...");
+			progressDialog.show();
+		}
+
+	}
+
+	public Boolean getResponseObject(String std_id, String canteenId) {
+		responseObject = SoapServiceManager.sendViewCanteenMenuRequest(std_id,
+				canteenId);
+		
+		if (responseObject != null)
+		{
+			return true;
+		} 
+		
+		else
+		{
+			return false;
+		}
+
+	}
+
+}

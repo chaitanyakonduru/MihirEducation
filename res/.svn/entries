@@ -1,0 +1,64 @@
+10
+
+dir
+1278
+https://119.82.117.228:8443/svn/Mobile/Android/MihirEducation/res
+https://119.82.117.228:8443/svn/Mobile
+
+
+
+2011-10-14T06:56:33.562500Z
+1276
+chaitanya
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+9ac9df62-d173-3e42-a51a-dae2a885b19f
+
+drawable
+dir
+
+drawable-hdpi
+dir
+
+drawable-ldpi
+dir
+
+drawable-mdpi
+dir
+
+drawable-xlarge
+dir
+
+
+
+add
+
+layout
+dir
+
+layout-xlarge
+dir
+
+
+
+add
+
+values
+dir
+
+
+
+delete
+

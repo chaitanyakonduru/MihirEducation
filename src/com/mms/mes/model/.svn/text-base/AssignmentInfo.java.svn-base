@@ -1,0 +1,90 @@
+package com.logictree.school.model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.ksoap2.serialization.SoapObject;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
+public class AssignmentInfo implements Parcelable {
+	
+	private static final String TAG = null;
+
+	public AssignmentInfo(SoapObject object)
+	{
+		if(object.hasProperty("Subject"))
+		{
+			this.subjectName=object.getPropertyAsString("Subject");
+		}
+		if(object.hasProperty("Details"))
+		{
+			this.taskDetails=object.getPropertyAsString("Details");
+		}
+		if(object.hasProperty("DueTime"))
+		{
+			this.duedate=object.getPropertyAsString("DueTime");
+		}
+	}
+	
+	public String getSubjectName() {
+		return subjectName;
+	}
+	public String getTaskDetails() {
+		return taskDetails;
+	}
+	public String getDuedate() {
+		return duedate;
+	}
+
+	private String taskDetails;
+	private String duedate;
+	private String subjectName;
+
+	public String toString() {
+		return subjectName;
+	}
+
+	public int describeContents() {
+		return 0;
+	}
+
+	
+	public void writeToParcel(Parcel dest, int flags) {
+	
+		ArrayList<String> list=new ArrayList<String>();
+		list.add(subjectName);
+		list.add(taskDetails);
+		list.add(duedate);
+		dest.writeStringList(list);
+	}
+	public AssignmentInfo(Parcel source)
+	{
+		Log.v(TAG, "I am in Assignment Info");
+		List<String> list=new ArrayList<String>();
+		source.readStringList(list);
+		
+		this.subjectName=list.get(0);
+		this.taskDetails=list.get(1);
+		this.duedate=list.get(2);
+		
+	}
+	
+	public static Creator<AssignmentInfo> CREATOR=new Creator<AssignmentInfo>() {
+		
+		@Override
+		public AssignmentInfo[] newArray(int size) {
+
+			return new AssignmentInfo[size];
+		}
+		public AssignmentInfo createFromParcel(Parcel source) {
+			return new AssignmentInfo(source);
+		}
+	};
+	
+
+}
+
+

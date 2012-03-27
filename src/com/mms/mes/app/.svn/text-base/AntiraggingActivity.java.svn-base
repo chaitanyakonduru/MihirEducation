@@ -1,0 +1,265 @@
+package com.logictree.school.app;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.ksoap2.serialization.SoapObject;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.logictree.school.R;
+import com.logictree.school.model.StudentInfo;
+import com.logictree.school.network.SoapServiceManager;
+
+public class AntiraggingActivity extends Activity implements OnClickListener {
+
+	private static final String TAG = "AntiRagging Activity";
+	private static int index = 1;
+	private EditText name1;
+	private EditText description;
+	private Button plusButton;
+	private LinearLayout mlayout;
+	public ProgressDialog progressDialog;
+	private List<String> listNames;
+	private SoapObject antiraggingobject;
+	private AntiraggingAsynchTask asynchTask;
+	private String student_Id;
+	private String studentName;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.layout_antiragging);
+		init();
+		MihirApp app=(MihirApp) getApplication();
+		StudentInfo info=app.getCurStudent();
+		student_Id=info.getStudentId();
+		studentName=info.getStudentName();
+		plusButton.setOnClickListener(this);
+		((TextView)findViewById(R.id.action_bar_tv_student_name)).setText(studentName);
+	}
+
+	// Initialize the Views
+	private void init() {
+		description = (EditText) findViewById(R.id.antiragging_edittext_description);
+		findViewById(R.id.antiragging_btn_send).setOnClickListener(AntiraggingActivity.this);
+		plusButton = (Button) findViewById(R.id.antiragging_btn_plus);
+		mlayout = (LinearLayout) findViewById(R.id.namedlayout);
+		
+	}
+
+	// Onclick Operations
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		switch (v.getId()) {
+
+		case R.id.antiragging_btn_send:
+			sendComplaint();
+			break;
+
+		case R.id.antiragging_btn_plus:
+			addNameView();
+			break;
+		case R.id.antiragging_tv_delete:
+			mlayout.removeView((View) v.getParent());
+			index--;
+			plusButton.setVisibility(View.VISIBLE);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	// Adding the Name dynamically
+	private void addNameView() {
+		
+		AlertDialog.Builder builder=new AlertDialog.Builder(AntiraggingActivity.this);
+			final EditText name=new EditText(AntiraggingActivity.this);
+			builder.setView(name);
+			builder.setTitle("Please Give the name");
+			builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO Auto-generated method stub
+					addNametoMainLayout(name.getText().toString());
+				}
+			});
+			builder.create();
+			builder.show();
+		
+	}
+		public void addNametoMainLayout(String name)
+		{
+			
+				View v = getLayoutInflater().inflate(
+						R.layout.antiragging_name_layout, null);
+				((TextView) v.findViewById(R.id.antiragging_tv_name)).setText(name);
+				Button deleteButton = (Button) v
+						.findViewById(R.id.antiragging_tv_delete);
+//				deleteButton.setTag(index);
+				mlayout.addView(v);
+				index++;
+				deleteButton.setVisibility(View.VISIBLE);
+				deleteButton.setOnClickListener(AntiraggingActivity.this);
+				if(index<=4)
+				{
+					plusButton.setVisibility(View.VISIBLE);
+				} 
+				else {
+				plusButton.setVisibility(View.INVISIBLE);
+			}
+
+		}
+		
+	
+
+	// When the send Button Clicks ,sends the request to the server
+
+	private void sendComplaint() {
+		listNames = new ArrayList<String>();
+		asynchTask = (AntiraggingAsynchTask) new AntiraggingAsynchTask();
+		int count = mlayout.getChildCount();
+		if(count>0)
+		{
+			for (int i = 0; i < count; i++) {
+				View v1 = mlayout.getChildAt(i);
+				TextView name = (TextView) v1
+						.findViewById(R.id.antiragging_tv_name);
+				
+				Log.v(TAG, name.getText().toString().trim());
+				listNames.add(name.getText().toString().trim());
+			}
+		
+			asynchTask.execute(student_Id, description.getText()
+				.toString());
+		}
+		else
+		{
+			Toast.makeText(AntiraggingActivity.this, "Please give atleast one name", Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	class AntiraggingAsynchTask extends AsyncTask<String, Boolean, SoapObject> {
+
+		@Override
+		protected SoapObject doInBackground(String... params) {
+			return getResponseObject(params[0], params[1]);
+		}
+
+		@Override
+		protected void onPostExecute(SoapObject result) {
+			super.onPostExecute(result);
+			hideProgress();
+			// if result true i.e., Server sends the response Object
+
+			if(result!=null)
+			{
+				displayComplaintId(result);
+			}
+			else
+			{
+				Toast.makeText(AntiraggingActivity.this, "Network Error", Toast.LENGTH_SHORT).show();
+			}
+			
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			showProgress();
+		}
+
+	}
+
+	// Showing the Progress Dialog
+	private void showProgress() {
+		if (progressDialog == null) {
+			progressDialog = new ProgressDialog(AntiraggingActivity.this);
+			progressDialog.setMessage("Sending.....");
+		}
+		progressDialog.show();
+	}
+
+	public void displayComplaintId(SoapObject resultObject) {
+		// TODO Auto-generated method stub
+		if (resultObject.hasProperty("ComplaintID"))
+		{
+			if (resultObject.hasProperty("RCRMSG")) {
+				Log.v(TAG, ""+ resultObject.getProperty("RCRMSG").toString());
+			}
+
+			String complaint_Id = resultObject.getProperty(
+					"ComplaintID").toString();
+			Log.v(TAG, complaint_Id);
+			showComplaintIdDialog(complaint_Id);
+		}
+
+	}
+
+	// Hide the Progress Dialog after some response came from the Server
+	private void hideProgress() {
+		if (progressDialog != null && progressDialog.isShowing()) {
+			progressDialog.dismiss();
+		}
+	}
+
+	// Showing the complaint ID to the User
+
+	private void showComplaintIdDialog(String complaint_Id) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(
+				AntiraggingActivity.this);
+
+		builder
+				.setMessage("Your Complaint has been sent");
+
+		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				finish();
+			}
+		});
+		builder.create();
+		builder.show();
+	}
+
+	// Sends the request to the server
+	public SoapObject getResponseObject(String std_id, String comments) {
+
+		antiraggingobject = SoapServiceManager.sendraggingComplaintRequest(
+				std_id, listNames, comments);
+		return antiraggingobject;
+
+	}
+	
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		index = 1;
+	}
+
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		index = 1;
+	}
+}

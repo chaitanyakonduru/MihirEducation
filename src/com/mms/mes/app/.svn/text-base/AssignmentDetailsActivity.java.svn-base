@@ -1,0 +1,28 @@
+package com.logictree.school.app;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.TextView;
+
+import com.logictree.school.R;
+import com.logictree.school.model.AssignmentInfo;
+public class AssignmentDetails extends Activity {
+
+	private static final String TAG = "AssignmentDetails";
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.layout_assignment_details);
+		Bundle bundle=getIntent().getExtras();
+		AssignmentInfo info=(AssignmentInfo) bundle.get("assignmentObject");
+		Log.v(TAG, info.getSubjectName());
+		Log.v(TAG, info.getTaskDetails());
+		Log.v(TAG, info.getDuedate());
+		((TextView) findViewById(R.id.assignment_details_tv_subjectname)).setText(info.getSubjectName());
+		((TextView) findViewById(R.id.assignment_details_tv_description)).setText(info.getTaskDetails());
+		((TextView)findViewById(R.id.assignment_details_tv_date)).setText(info.getDuedate());
+	}
+}

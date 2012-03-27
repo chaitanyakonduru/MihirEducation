@@ -1,0 +1,76 @@
+package com.logictree.school.app;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.TextView;
+
+import com.logictree.school.R;
+
+public class MyAccountActivity extends Activity implements OnClickListener {
+	private TextView titleText;
+	private Button signoutBtn;
+	private TextView studentname;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.layout_myaccount);
+		init();
+		
+	}
+
+	
+	private void init() {
+		studentname = (TextView) findViewById(R.id.action_bar_tv_student_name);
+		studentname.setVisibility(View.VISIBLE);
+		studentname.setText(HomeActivity.studentname);
+		((Button) findViewById(R.id.myaccount_btn_signout)).setOnClickListener(MyAccountActivity.this);
+		((Button) findViewById(R.id.myaccount_btn_changepwd)).setOnClickListener(MyAccountActivity.this);
+	}
+
+	
+
+	public void some() {
+		LoginActivity.myPrefs = this.getSharedPreferences("myPrefs",
+				MODE_WORLD_WRITEABLE);
+		SharedPreferences.Editor prefsEditor = LoginActivity.myPrefs.edit();
+		prefsEditor.putString(LoginActivity.STATUS, "0");
+		prefsEditor.commit();
+	}
+
+	@Override
+	public void onClick(View v) {
+
+		switch (v.getId()) {
+		case R.id.myaccount_btn_signout:
+				Intent intent = new Intent(MyAccountActivity.this,LoginActivity.class);
+			    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			    startActivity(intent);
+			    finish();
+			
+			    break;
+
+		case R.id.myaccount_btn_changepwd:
+			Intent intent1 = new Intent(MyAccountActivity.this,
+					ChangePasswordActivity.class);
+			startActivity(intent1);
+			finish();
+			break;
+		}
+
+	}
+
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		this.finish();
+	}
+
+}

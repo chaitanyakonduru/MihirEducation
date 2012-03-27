@@ -1,0 +1,21 @@
+package com.logictree.school.app;
+
+import com.logictree.school.model.StudentInfo;
+
+import android.app.Application;
+
+public class MihirApp extends Application {
+
+	private StudentInfo curStudentInfo;
+
+	
+
+	public  StudentInfo getCurStudent() {
+		return curStudentInfo;
+	}
+
+	public void setCurStudent( StudentInfo studentInfo) {
+		curStudentInfo = studentInfo;
+	}
+
+}

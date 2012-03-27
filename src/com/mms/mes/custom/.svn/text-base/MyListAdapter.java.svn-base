@@ -1,0 +1,65 @@
+package com.logictree.school.custom;
+
+import java.util.List;
+
+import android.content.Context;
+import android.content.Intent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
+
+import com.logictree.school.R;
+import com.logictree.school.app.HomeActivity;
+import com.logictree.school.model.StudentInfo;
+
+public class MyListAdapter extends ArrayAdapter<StudentInfo> 
+{
+	private Context context;
+	private List<StudentInfo> ll;
+	public MyListAdapter(Context context, int textViewResourceId,
+			List<StudentInfo> objects) {
+		super(context, textViewResourceId, objects);
+		this.context=context;
+		ll=objects;
+		
+	}
+
+
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
+
+	@Override
+	public int getCount() {
+		return ll.size();
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		
+		final StudentInfo login=ll.get(position);
+		convertView=LayoutInflater.from(context).inflate(R.layout.list_layout_login, null);			
+		TextView childName=((TextView) convertView.findViewById(R.id.list_layout_tv_logintv));
+		childName.setText(login.getStudentName());
+		childName.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+			Intent intent=new Intent(context,HomeActivity.class);
+			intent.putExtra("mylogin",new String[]{login.getStudentId(),login.getStudentName()});
+			context.startActivity(intent);
+			}
+		});
+		
+		
+		return convertView;
+		
+	}
+
+	
+
+	
+}

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/list_bg"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <include
+        android:id="@+id/actionbarlayout"
+        layout="@layout/action_bar" />
+
+    <com.mms.mes.custom.DashboardLayout
+        android:id="@+id/dashboardlayout"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+       android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/home_btn_marks"
+            style="@style/DashboardButtonStyle"
+            android:drawableTop="@drawable/home_marksbutton"
+            android:text="@string/home_marks" />
+
+        <TextView
+            android:id="@+id/home_btn_attendance"
+            style="@style/DashboardButtonStyle"
+            android:drawableTop="@drawable/home_attendance"
+            android:text="@string/home_attendance" />
+
+        <TextView
+            android:id="@+id/home_btn_notifications"
+            style="@style/DashboardButtonStyle"
+            android:drawableTop="@drawable/home_notifi_events"
+            android:text="@string/home_notifi_evetns" />
+
+        <TextView
+            android:id="@+id/home_btn_assignment"
+            style="@style/DashboardButtonStyle"
+            android:drawableTop="@drawable/home_assignments"
+            android:text="@string/home_Assignments" />
+
+        <TextView
+            android:id="@+id/home_btn_antiragging"
+            style="@style/DashboardButtonStyle"
+            android:drawableTop="@drawable/home_antiragging"
+            android:text="@string/home_antiragging" />
+
+        <TextView
+            android:id="@+id/home_btn_canteen"
+            style="@style/DashboardButtonStyle"
+            android:drawableTop="@drawable/home_canteen"
+            android:text="@string/home_canteen" />
+
+        <TextView
+            android:id="@+id/home_btn_myaccount"
+            style="@style/DashboardButtonStyle"
+            android:drawableTop="@drawable/home_myaccount"
+            android:text="@string/home_myaccount" />
+
+        <TextView
+            android:id="@+id/home_btn_emergency"
+            style="@style/DashboardButtonStyle"
+            android:drawableTop="@drawable/home_emergency"
+            android:text="@string/home_emergency" />
+    </com.mms.mes.custom.DashboardLayout>
+
+    <include layout="@layout/mms_ad" />
+
+</LinearLayout>

@@ -1,0 +1,86 @@
+package com.logictree.school.app;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.logictree.school.R;
+import com.logictree.school.custom.MyAdapter;
+import com.logictree.school.custom.MyAdapter1;
+import com.logictree.school.model.Events;
+import com.logictree.school.model.Notifications;
+
+public class NotificationActivity extends Activity  {
+
+	private List<Notifications> list1;
+	private List<Events> list2;
+	private Notifications n;
+	private Events e;
+	private ListView listNotification;
+	private ListView listEvents;
+	private TextView studentname;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.layout_notifications);
+		//findViewById(R.id.action_bar_imgbtn_home).setOnClickListener(NotificationActivity.this);
+		listNotification=(ListView) findViewById(R.id.list);
+		listEvents=(ListView) findViewById(R.id.list1);
+		
+		list1=new ArrayList<Notifications>();
+		list2=new ArrayList<Events>();
+		studentname = (TextView) findViewById(R.id.action_bar_tv_student_name);
+		studentname.setVisibility(View.VISIBLE);
+		studentname.setText(HomeActivity.studentname);
+		//n=new Notifications("Ntitle1", "22-09-2011", "ndescription1");
+		list1.add(new Notifications("Ntitle1", "22-09-2011", "ndescription1"));
+		list1.add(new Notifications("Ntitle2", "23-09-2011", "ndescription2"));
+		list1.add(new Notifications("Ntitle3", "24-09-2011", "ndescription3"));
+		list1.add(new Notifications("Ntitle4", "25-09-2011", "ndescription4"));
+		list1.add(new Notifications("Ntitle5", "26-09-2011", "ndescription5"));
+		list1.add(new Notifications("Ntitle6", "27-09-2011", "ndescription6"));
+		list1.add(new Notifications("Ntitle7", "28-09-2011", "ndescription7"));
+		list1.add(new Notifications("Ntitle8", "29-09-2011", "ndescription8"));
+		list1.add(new Notifications("Ntitle9", "30-09-2011", "ndescription9"));
+		list1.add(new Notifications("Ntitle10", "31-09-2011", "ndescription10"));
+			
+
+		
+		e=new Events("Etitle1", "25-09-2011", "eventDescription1");
+		list2.add(e);
+		e=new Events("Etitle2", "26-09-2011", "eventDescription2");
+		list2.add(e);
+		e=new Events("Etitle3", "27-09-2011", "eventDescription3");
+		list2.add(e);
+		e=new Events("Etitle4", "28-09-2011", "eventDescription4");
+		list2.add(e);
+		e=new Events("Etitle5", "29-09-2011", "eventDescription5");
+		list2.add(e);
+		e=new Events("Etitle6", "30-09-2011", "eventDescription6");
+		list2.add(e);
+		e=new Events("Etitle7", "31-09-2011", "eventDescription7");
+		list2.add(e);
+		e=new Events("Etitle8", "32-09-2011", "eventDescription8");
+		list2.add(e);
+		e=new Events("Etitle9", "33-09-2011", "eventDescription9");
+		list2.add(e);
+		e=new Events("Etitle10", "34-09-2011", "eventDescription10");
+		list2.add(e);
+		
+		listNotification.setAdapter(new MyAdapter(NotificationActivity.this, 0, list1));
+		listEvents.setAdapter(new MyAdapter1(NotificationActivity.this, 0, list2));
+	}
+
+	
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		this.finish();
+	}
+}

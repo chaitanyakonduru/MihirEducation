@@ -1,0 +1,66 @@
+package com.logictree.school.custom;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.content.Context;
+import android.content.Intent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
+
+import com.logictree.school.R;
+import com.logictree.school.app.NotificationsDetailsActivity;
+import com.logictree.school.model.Notifications;
+
+public class MyAdapter extends ArrayAdapter<Notifications> {
+
+	private Context context;
+	private List<Notifications> ll=new ArrayList<Notifications>();
+	public MyAdapter(Context context, int resource, List<Notifications> nList) {
+		super(context, resource, nList);
+		this.context=context;
+		this.ll=nList;
+		
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
+
+	@Override
+	public int getCount() {
+		return ll.size();
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		
+		final Notifications notifications=ll.get(position);
+		
+		
+			convertView=LayoutInflater.from(context).inflate(R.layout.list_layout_notifications, null);
+			((TextView) convertView.findViewById(R.id.list_layout_tv_eventtitle)).setText(notifications.getNotificationTitle());
+			((TextView) convertView.findViewById(R.id.list_layout_tv_date)).setText(notifications.getNotificationDate());
+			((TextView)convertView.findViewById(R.id.list_layout_tv_greaterthan)).setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+				Intent intent=new Intent(context,NotificationsDetailsActivity.class);
+				intent.putExtra("myObject", notifications);
+				intent.putExtra("from", 0);
+				context.startActivity(intent);
+				}
+			});
+		
+		return convertView;
+		
+	}
+
+	
+
+}

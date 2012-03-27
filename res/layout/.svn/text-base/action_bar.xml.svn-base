@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"  android:background="#80808080"
+	android:layout_height="wrap_content"  
+	android:layout_gravity="center_horizontal" 
+	android:orientation="vertical">
+	<LinearLayout 
+		android:layout_width="match_parent" 
+		android:layout_height="wrap_content">
+		<ImageView
+			 
+			android:src="@drawable/school_logo" 
+			android:layout_height="wrap_content" 
+			android:layout_width="wrap_content" 
+			android:layout_marginLeft="5dip" 
+			android:paddingTop="5dip">
+			 
+		</ImageView>
+	
+	<LinearLayout 
+		android:layout_height="wrap_content" 
+		android:layout_width="match_parent" 
+		android:layout_gravity="center" 
+		 android:orientation="vertical">
+	
+	<TextView 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content" 
+		android:layout_weight="1" 
+		android:paddingLeft="10dip"
+		android:gravity="left" 
+		android:textSize="20sp" 
+		android:textColor="@android:color/primary_text_dark" 
+		android:text="St.Anns High School" 
+		android:textStyle="bold"/>
+	
+	
+	
+	<TextView 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content" 
+		android:text="Mihir Product Name"  
+		android:paddingLeft="30dip"
+		android:layout_gravity="left" 
+		android:textSize="15sp" 
+		android:textColor="@android:color/secondary_text_dark"/>
+	</LinearLayout>
+	</LinearLayout>
+	
+</LinearLayout>
+    

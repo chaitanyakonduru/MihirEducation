@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+  <LinearLayout
+  		xmlns:android="http://schemas.android.com/apk/res/android" 
+  		android:layout_height="wrap_content" 
+  		android:id="@+id/layout_Items" 
+  		android:background="@drawable/canteen_textbox" 
+  		android:orientation="horizontal" 
+  		android:layout_width="match_parent" android:gravity="center">
+		
+    <TextView 
+    	android:layout_weight="1" 
+    	android:textSize="15sp" 
+    	android:textAppearance="?android:attr/textAppearanceMedium" 
+    	android:layout_height="wrap_content" 
+    	android:singleLine="true"
+    	android:textColor="#ffffff" 
+    	android:id="@+id/canteen_tv_itemname1" 
+    	android:text="Item Desc1" android:layout_width="wrap_content" android:paddingLeft="10dip">
+    </TextView>
+	
+	<TextView 
+		android:layout_weight="1" 
+		android:textSize="15sp" 
+		android:textAppearance="?android:attr/textAppearanceMedium" 
+		android:layout_height="wrap_content" 
+		android:text="Item 2" 
+		android:textColor="#ffffff" 
+		android:id="@+id/canteen_tv_quantity1" 
+		android:layout_width="wrap_content" android:gravity="center">
+	</TextView>
+	
+	<TextView 
+    	android:layout_weight="1" 
+    	android:textSize="15sp" 
+    	android:textAppearance="?android:attr/textAppearanceMedium" 
+    	android:layout_height="wrap_content" 
+    	android:text="Cost" 
+    	android:textColor="#ffffff" 
+    	android:id="@+id/canteen_tv_totPrice" android:layout_width="wrap_content" android:gravity="right" android:paddingRight="12dip">
+    </TextView>
+    
+	
+	
+	<Button 
+		android:layout_height="wrap_content" 
+		android:background="@drawable/antiragging_btn_close" 
+		android:id="@+id/canteen_btn_close" android:layout_width="wrap_content" android:layout_marginRight="10dip"/>
+	
+	
+</LinearLayout>  
+

@@ -1,0 +1,59 @@
+package com.logictree.school.model;
+
+import org.ksoap2.serialization.SoapObject;
+
+public class MenuItem {
+
+	private String item_id;
+	private String itemDescription;
+	private String itemPrice;
+	private String itemStock;
+
+	public MenuItem(SoapObject object) {
+		if (object != null) {
+			this.item_id = object.getProperty("ItemID").toString();
+			this.itemDescription = object.getProperty("ItemDescription")
+					.toString();
+			this.itemPrice = object.getProperty("ItemPrice").toString();
+			this.itemStock = object.getProperty("ItemStock").toString();
+		}
+	}
+
+	public String getItem_id() {
+		return item_id;
+	}
+
+	public void setItem_id(String itemId) {
+		item_id = itemId;
+	}
+
+	public String getItemDescription() {
+		return itemDescription;
+	}
+
+	public void setItemDescription(String itemDescription) {
+		this.itemDescription = itemDescription;
+	}
+
+	public String getItemPrice() {
+		return itemPrice;
+	}
+
+	public void setItemPrice(String itemPrice) {
+		this.itemPrice = itemPrice;
+	}
+
+	public String getItemStock() {
+		return itemStock;
+	}
+
+	public void setItemStock(String itemStock) {
+		this.itemStock = itemStock;
+	}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return this.itemDescription;
+	}
+}

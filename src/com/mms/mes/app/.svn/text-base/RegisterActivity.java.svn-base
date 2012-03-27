@@ -1,0 +1,207 @@
+package com.logictree.school.app;
+
+import org.ksoap2.serialization.SoapObject;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.logictree.school.R;
+import com.logictree.school.network.SoapServiceManager;
+
+public class RegisterActivity extends Activity implements OnClickListener {
+	private static final String TAG = "Register Activity";
+	private EditText emailText;
+	private EditText phoneText;
+	private String from;
+	private Button submit;
+	private Button registerImgBtn;
+	private SoapObject responseObject;
+	private TextView header;
+	private Register_forgotAsynchTask asynchTask;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.layout_signup);
+
+		init();
+		from = getIntent().getStringExtra("from");
+		if (from.equalsIgnoreCase("Register")) {
+			submit.setVisibility(View.GONE);
+			registerImgBtn.setVisibility(View.VISIBLE);
+			header.setText("Register");
+		} else if (from.equalsIgnoreCase("ForgotPwd")) {
+			registerImgBtn.setVisibility(View.GONE);
+			submit.setVisibility(View.VISIBLE);
+			header.setText("Forgot Password");
+		}
+		registerImgBtn.setOnClickListener(this);
+		submit.setOnClickListener(this);
+	}
+
+	private void init() {
+		header=(TextView) findViewById(R.id.register_tv_header);
+		emailText = (EditText) findViewById(R.id.signup_edittext_email);
+		phoneText = (EditText) findViewById(R.id.signup_edittext_phone);
+		registerImgBtn = ((Button) findViewById(R.id.signup_btn_register));
+		submit = (Button) findViewById(R.id.forgotpwd_btn_send);
+	}
+
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.signup_btn_register:
+			registerDetails();
+			finish();
+			break;
+		case R.id.forgotpwd_btn_send:
+			forgotPwd();
+		default:
+			break;
+		}
+	}
+
+	private void forgotPwd() {
+		if (emailText.getText().toString().trim().equalsIgnoreCase("")
+				|| phoneText.getText().toString().trim().equalsIgnoreCase("")) {
+			Toast.makeText(RegisterActivity.this, "Please fill both details",
+					Toast.LENGTH_SHORT).show();
+		}
+
+		else {
+			asynchTask=	(Register_forgotAsynchTask) new Register_forgotAsynchTask();
+			asynchTask.execute(emailText.getText()
+					.toString(), phoneText.getText().toString());
+		}
+	}
+
+	private void registerDetails() {
+		if (emailText.getText().toString().trim().equalsIgnoreCase("")
+				|| phoneText.getText().toString().trim().equalsIgnoreCase("")) {
+			Toast.makeText(RegisterActivity.this, "Please fill both details",
+					Toast.LENGTH_SHORT).show();
+		}
+
+		else {
+			asynchTask=(Register_forgotAsynchTask) new Register_forgotAsynchTask().execute(emailText.getText()
+					.toString(), phoneText.getText().toString());
+		}
+	}
+
+	public static void showDialog(Context context) {
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder
+				.setMessage("We have sent password to your email Please check it once");
+		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+		
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+			
+			
+			}
+		});
+		builder.create();
+		builder.show();
+
+	}
+
+	class Register_forgotAsynchTask extends AsyncTask<String, Boolean, Boolean> {
+
+		private ProgressDialog progressDialog;
+
+		@Override
+		protected Boolean doInBackground(String... params) {
+
+			return getResponseObject(params[0], params[1]);
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			progressDialog.dismiss();
+			if(responseObject!=null)
+			{
+				String msg="";
+				if(result)
+				{
+					if(responseObject.hasProperty("RegistrationMSG"))
+					{
+						 msg=responseObject.getProperty("RegistrationMSG").toString();
+						if(msg.equalsIgnoreCase("NOMAILEXISTS"))
+						{
+								Toast.makeText(RegisterActivity.this, "Invalid email address or Mobile No", Toast.LENGTH_SHORT).show();	
+						}
+						else if(msg.equalsIgnoreCase("MAILSENTSUCCESS"))
+						{
+							showDialog(RegisterActivity.this);
+						}
+						else if(msg.equalsIgnoreCase("USERALREADYEXISTS"))
+						{
+							Toast.makeText(RegisterActivity.this,"User already Exists", Toast.LENGTH_SHORT).show();
+						}
+					}
+					else if(responseObject.hasProperty("FPMSG"))
+					{
+						msg=responseObject.getProperty("FPMSG").toString();
+						if(msg.equalsIgnoreCase("EMAIL OR MOBILENUMBER NOT FOUND"))
+						{
+							Toast.makeText(RegisterActivity.this, "Invalid Email or Mobile No", Toast.LENGTH_SHORT).show();
+						}
+						else {
+							
+							showDialog(RegisterActivity.this);
+							
+						}
+					}
+				}
+			
+			}
+			else
+			{
+				Toast.makeText(RegisterActivity.this, "Network Error", Toast.LENGTH_SHORT).show();
+			}
+		}
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+			progressDialog=new ProgressDialog(RegisterActivity.this);
+			progressDialog.setMessage("Please Wait...");
+			progressDialog.show();
+		}
+	}
+
+	public Boolean getResponseObject(String email, String phno) {
+	responseObject=null;	
+	if(from.equalsIgnoreCase("Register"))
+	{
+		responseObject = SoapServiceManager.sendregisterRequest(email, phno);
+	}
+	
+	else
+	{
+		responseObject=SoapServiceManager.sendforgotPasswordRequest(email, phno);
+	}
+		
+	if (responseObject != null) {
+			
+			return true;
+		} else {
+			return false;
+		}
+	}
+}

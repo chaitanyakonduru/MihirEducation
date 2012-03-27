@@ -1,0 +1,262 @@
+package com.logictree.school.app;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.ksoap2.serialization.SoapObject;
+
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.TextView.OnEditorActionListener;
+
+import com.logictree.school.R;
+import com.logictree.school.model.StudentInfo;
+import com.logictree.school.network.SoapServiceManager;
+
+public class LoginActivity extends Activity implements OnClickListener {
+	
+	private EditText unameText;
+	private ProgressDialog progressDialog;
+	private EditText pwdText;
+	public static SharedPreferences myPrefs;
+	private String prefName;
+	public static List<StudentInfo> studentInfos;
+	private StudentInfo login;
+	private Intent intent;
+	private AuthenticateReqestTask mySoapReqestTask;
+	public static final String STATUS = "status";
+	private static final String TAG = "LoginActivity";
+
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		setContentView(R.layout.layout_login);
+
+		myPrefs = this.getSharedPreferences("myPrefs", MODE_WORLD_READABLE);
+		if (myPrefs != null) {
+			prefName = myPrefs.getString(STATUS, "nothing");
+			Log.v(TAG, prefName);
+			if (prefName.equalsIgnoreCase("1")) {
+				startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+				finish();
+			}
+		}
+		unameText = (EditText) findViewById(R.id.login_edittext_username);
+		pwdText = (EditText) findViewById(R.id.login_edittext_password);
+		pwdText.setOnEditorActionListener(new OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int actionId,
+					KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_DONE) {
+					checkLoginCredentials();
+					return true;
+				}
+				return false;
+			}
+		});
+		 findViewById(R.id.login_btn_login).setOnClickListener(this);
+		 findViewById(R.id.login_btn_forgotpwd).setOnClickListener(this);
+		 findViewById(R.id.login_btn_register).setOnClickListener(this);
+		
+	}
+
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.login_btn_login:
+			checkLoginCredentials();
+			break;
+		case R.id.login_btn_forgotpwd:
+			intent=new Intent(LoginActivity.this, RegisterActivity.class);
+			intent.putExtra("from","ForgotPwd");
+			startActivity(intent);
+			break;
+		case R.id.login_btn_register:
+			intent=new Intent(LoginActivity.this, RegisterActivity.class);
+			intent.putExtra("from","Register");
+			startActivity(intent);
+			break;
+		default:
+			break;
+		}
+	}
+
+	private void checkLoginCredentials() {
+		studentInfos = new ArrayList<StudentInfo>();
+		String user = "redush@gmail.com";
+//		 String user="saysudheer@gmail.com";
+//		String user="saikumar.bondugula@gmail.com";
+//		String pwd="sai";
+		String pwd = "logictree";
+		final String userName = unameText.getText().toString().trim();
+		final String password = pwdText.getText().toString().trim();
+		
+		if(TextUtils.isEmpty(userName)){
+			unameText.setError(" Enter your mail id");
+			return;
+		}
+		
+		if(TextUtils.isEmpty(password)){
+			pwdText.setError("Enter your Password");
+			return;
+		}
+		
+		new AuthenticateReqestTask().execute(user, pwd);
+	}
+
+	public void storePreferences() {
+		myPrefs = this.getSharedPreferences("myPrefs", MODE_WORLD_WRITEABLE);
+		SharedPreferences.Editor prefsEditor = myPrefs.edit();
+		prefsEditor.putString(LoginActivity.STATUS, "1");
+		prefsEditor.commit();
+	}
+
+	class AuthenticateReqestTask extends AsyncTask<String, Boolean, SoapObject> {
+
+		@Override
+		protected SoapObject doInBackground(String... params) {
+
+			return getResponseObject(params[0], params[1]);
+		}
+
+		@Override
+		protected void onPostExecute(SoapObject result) {
+			super.onPostExecute(result);
+			
+				hideDialog();
+				Log.v(TAG, "POST EXECUTE");
+				
+				if(result!=null)
+				{
+					loginStatus(result);
+				}
+				else
+				{
+					Toast.makeText(LoginActivity.this, "Network Error", Toast.LENGTH_SHORT).show();
+				}
+				
+			} 
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			showDialog();
+			
+
+		}
+
+		private void showDialog() {
+			// TODO Auto-generated method stub
+			progressDialog = new ProgressDialog(LoginActivity.this);
+			progressDialog.setMessage("Signing in...");
+			progressDialog.show();	
+		}
+	}
+
+	public SoapObject getResponseObject(String user, String pwd ) {
+		
+
+			SoapObject responseObject = SoapServiceManager.sendAuthenticateRequest(user,
+					pwd);
+
+		return responseObject;
+	}
+
+	public void hideDialog() {
+		// TODO Auto-generated method stub
+		progressDialog.dismiss();
+	}
+
+	private void loginStatus(SoapObject result) {
+		
+		int childCount=0;
+		if (result.hasProperty("AuthenticateMSG")) {
+			String authMessage = result.getProperty("AuthenticateMSG")
+					.toString();
+			Log.v(TAG, "Auth Message is:::" + authMessage);
+
+			if (authMessage.equalsIgnoreCase("INVALID_LOGIN")) {
+				Log.v(TAG, "Invalid Login");
+				Toast.makeText(LoginActivity.this, "Invalid User/Password",
+						Toast.LENGTH_SHORT).show();
+				return;
+			} else {
+				Log.v(TAG, "Login as "
+						+ result.getAttribute("Type").toString());
+				if (result.getAttribute("Type").toString()
+						.equalsIgnoreCase("Parent")) {
+					if (result.hasProperty("Children")) {
+						SoapObject childProperty = (SoapObject) result
+								.getProperty("Children");
+						if (childProperty.hasAttribute("NoOfChilds")) {
+							childCount = Integer.parseInt(childProperty
+									.getAttribute("NoOfChilds").toString());
+							Log.v(TAG, "I have "
+									+ childProperty.getAttribute("NoOfChilds")
+											.toString() + " Childs");
+							int count = childProperty.getPropertyCount();
+							for (int i = 0; i < count; i++) {
+								SoapObject object2 = (SoapObject) childProperty
+										.getProperty(i);
+								login = new StudentInfo(object2);
+								studentInfos.add(login);
+								Log.v(TAG, "Student Id is ="
+										+ object2.getProperty("StudentID")
+												.toString());
+								Log.v(TAG, "Student Name is ="
+										+ object2.getProperty("StudentName")
+												.toString());
+							}
+						}
+						if (childCount > 1) {
+							Intent intent = new Intent(LoginActivity.this,
+									ParentActivity.class);
+							
+							startActivity(intent);
+						} 
+						LoginActivity.this.finish();
+
+					}
+				} 
+				else if (result.getAttribute("Type").toString()
+						.equalsIgnoreCase("Student")) {
+					Log.v(TAG, "In LoginStatusRequest");
+					Log.v(TAG, "" + result.hasProperty("Student"));
+					String std_ID = ((SoapObject) result
+							.getProperty("Student")).getProperty("StudentID")
+							.toString();
+					String std_Name = ((SoapObject) result
+							.getProperty("Student")).getProperty("StudentName")
+							.toString();
+					
+					StudentInfo studentInfo=new StudentInfo(std_ID, std_Name);
+					MihirApp app=(MihirApp) getApplication();
+					app.setCurStudent(studentInfo);
+					Log.v(TAG, "Student Id " + std_ID);
+					Log.v(TAG, "Student Name " + std_Name);
+
+					Intent intent = new Intent(LoginActivity.this,
+							HomeActivity.class);
+					
+					startActivity(intent);
+					finish();
+				}
+
+			}
+		}
+
+	}
+	
+	
+}

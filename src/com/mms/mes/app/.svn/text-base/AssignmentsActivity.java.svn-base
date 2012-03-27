@@ -1,0 +1,134 @@
+package com.logictree.school.app;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.ksoap2.serialization.SoapObject;
+
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
+
+import com.logictree.school.R;
+import com.logictree.school.model.AssignmentInfo;
+import com.logictree.school.model.StudentInfo;
+import com.logictree.school.app.AssignmentDetails;
+import com.logictree.school.network.SoapServiceManager;
+
+public class AssignmentsActivity extends Activity implements OnItemClickListener  {
+
+	private static final String TAG = "Assignments Activity";
+	private ListView assignmentsView;
+	private List<AssignmentInfo> infoList;
+
+
+protected void onCreate(Bundle savedInstanceState) {
+	super.onCreate(savedInstanceState);
+	setContentView(R.layout.layout_assignments);
+	MihirApp app=(MihirApp) getApplication();
+	StudentInfo info=app.getCurStudent();
+	String student_id=info.getStudentId();
+	((TextView)findViewById(R.id.action_bar_tv_student_name)).setText(info.getStudentName());
+	assignmentsView=(ListView) findViewById(android.R.id.list);
+	new AssignmentTask().execute(student_id);
+
+}
+class AssignmentTask extends AsyncTask<String, Boolean, SoapObject>
+{
+	ProgressDialog progressDialog;
+	@Override
+	protected SoapObject doInBackground(String... params) {
+		return getResultObject(params[0]);
+	}
+
+	@Override
+	protected void onPostExecute(SoapObject result) {
+		// TODO Auto-generated method stub
+		super.onPostExecute(result);
+		Log.v(TAG,"POST EXECUTE::::");
+		progressDialog.dismiss();
+		if(result!=null)
+		{
+			displayAssignmentTasks(result);
+		}
+		else
+		{
+			Toast.makeText(AssignmentsActivity.this,"Please Check your Internet Connection", Toast.LENGTH_SHORT).show();
+		}
+		
+	}
+
+	@Override
+	protected void onPreExecute() {
+		// TODO Auto-generated method stub
+		super.onPreExecute();
+		progressDialog=new ProgressDialog(AssignmentsActivity.this);
+		progressDialog.setMessage("Loading....");
+		progressDialog.show();
+	}
+	
+}
+public SoapObject getResultObject(String student_Id) {
+	SoapObject resultObject=SoapServiceManager.sendAssignmetnsRequest(student_Id);
+	return resultObject;
+	
+}
+public void displayAssignmentTasks(SoapObject result) {
+
+		infoList=new ArrayList<AssignmentInfo>();
+		AssignmentInfo assignmentInfo;
+		if(result.hasProperty("Student"))
+		{
+			SoapObject object=(SoapObject) result.getProperty("Student");
+		
+			Log.v(TAG,"Student ID is :::"+object.getAttribute("ID"));
+			Log.v(TAG,"Student Name is :::"+object.getAttribute("Name"));
+			Log.v(TAG,"Student Class  is :::"+object.getAttribute("ClassName"));
+		
+			int count=object.getPropertyCount();
+		
+			for(int i=0;i<count;i++)
+			{
+				SoapObject object2=(SoapObject) object.getProperty(i);
+				Log.v(TAG,""+object2.toString());
+				assignmentInfo=new AssignmentInfo(object2);
+				infoList.add(assignmentInfo);
+			}
+			if(infoList!=null)
+			{
+				
+				displayListView(infoList);
+			}
+		
+		}
+		if(result.hasProperty("AssignmentRESPMSG"))
+		{
+		//	((TextView)findViewById(R.id.assignments_tv_noassignments)).setVisibility(View.VISIBLE);
+			Toast.makeText(AssignmentsActivity.this,"You have no assignments Today", Toast.LENGTH_SHORT).show();
+		}
+	
+}
+private void displayListView(List<AssignmentInfo> assignmentList) {
+	// TODO Auto-generated method stub
+	assignmentsView.setAdapter(new ArrayAdapter<AssignmentInfo>(AssignmentsActivity.this, android.R.layout.simple_list_item_1,assignmentList));
+	assignmentsView.setOnItemClickListener(AssignmentsActivity.this);
+}
+
+public void onItemClick(AdapterView<?> arg0, View view, int pos, long id) {
+	Intent intent=new Intent(AssignmentsActivity.this, AssignmentDetails.class);
+	AssignmentInfo info=infoList.get(pos);
+	intent.putExtra("assignmentObject", info);
+	startActivity(intent);
+}
+
+}

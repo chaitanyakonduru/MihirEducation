@@ -1,0 +1,40 @@
+package com.logictree.school.model;
+
+import org.ksoap2.serialization.SoapObject;
+
+public class StudentInfo {
+
+	@SuppressWarnings("unused")
+	private static final String TAG = "Login Model";
+
+	public StudentInfo(SoapObject object)
+	{
+		studentId=object.getProperty("StudentID").toString();
+		studentName=object.getProperty("StudentName").toString();
+	}
+	
+	public StudentInfo(String std_Id,String std_name)
+	{
+		this.studentId=std_Id;
+		this.studentName=std_name;
+	}
+	private String studentId;
+	private String studentName;
+	
+	
+	public String getStudentId() {
+		return studentId;
+	}
+	
+	public String getStudentName() {
+		return studentName;
+	}
+	
+	
+	
+	@Override
+	public String toString() {
+		
+		return this.studentName;
+	}
+}

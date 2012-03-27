@@ -1,0 +1,84 @@
+package com.logictree.school.model;
+
+import java.util.ArrayList;
+import java.util.List;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Notifications implements Parcelable {
+	private String notificationTitle;
+	private String notificationDate;
+	private String notificationDescription;
+
+	public Notifications(String notificationTitle, String notificationDate,
+			String notificationDescription) {
+		super();
+		this.notificationTitle = notificationTitle;
+		this.notificationDate = notificationDate;
+		this.notificationDescription = notificationDescription;
+	}
+
+	public String getNotificationTitle() {
+		return notificationTitle;
+	}
+
+	public void setNotificationTitle(String notificationTitle) {
+		this.notificationTitle = notificationTitle;
+	}
+
+	public String getNotificationDate() {
+		return notificationDate;
+	}
+
+	public void setNotificationDate(String notificationDate) {
+		this.notificationDate = notificationDate;
+	}
+
+	public String getNotificationDescription() {
+		return notificationDescription;
+	}
+
+	public void setNotificationDescription(String notificationDescription) {
+		this.notificationDescription = notificationDescription;
+	}
+
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		// TODO Auto-generated method stub
+		List<String> strList = new ArrayList<String>();
+		strList.add(notificationTitle);
+		strList.add(notificationDate);
+		strList.add(notificationDescription);
+		dest.writeStringList(strList);
+	}
+
+	public Notifications(Parcel parcel) {
+		List<String> myList = new ArrayList<String>();
+		parcel.readStringList(myList);
+		this.notificationTitle = myList.get(0);
+		this.notificationDate = myList.get(1);
+		this.notificationDescription = myList.get(2);
+	}
+
+	public static final Parcelable.Creator<Notifications> CREATOR = new Parcelable.Creator<Notifications>() {
+
+		public Notifications[] newArray(int size) {
+			return new Notifications[size];
+		}
+
+		public Notifications createFromParcel(Parcel source) {
+
+			return new Notifications(source);
+		}
+	};
+
+	public static Parcelable.Creator<Notifications> getCreator() {
+		return CREATOR;
+	}
+}

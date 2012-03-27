@@ -1,0 +1,33 @@
+package com.logictree.school.model;
+
+import org.ksoap2.serialization.SoapObject;
+
+public class CanteenNames {
+
+	private String canteenId;
+	private String canteenName;
+	
+	public CanteenNames(SoapObject object)
+	{
+		canteenId=object.getProperty("CanteenID").toString();
+		canteenName=object.getProperty("CanteenName").toString();
+	}
+	public String getCanteenId() {
+		return canteenId;
+	}
+	public void setCanteenId(String canteenId) {
+		this.canteenId = canteenId;
+	}
+	public String getCanteenName() {
+		return canteenName;
+	}
+	public void setCanteenName(String canteenName) {
+		this.canteenName = canteenName;
+	}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return canteenName;
+	}
+}

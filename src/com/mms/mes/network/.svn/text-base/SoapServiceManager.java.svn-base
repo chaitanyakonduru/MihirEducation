@@ -1,0 +1,418 @@
+package com.logictree.school.network;
+
+import java.util.List;
+
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.PropertyInfo;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
+
+import android.util.Log;
+
+public class SoapServiceManager {
+
+	private final static String NAMESPACE = "http://mihirmobile.com/MIHIRSrv/";
+	private static final String URL = "http://mihirsrv.elasticbeanstalk.com/services/MIHIRSrv?wsdl";
+	private static final String TAG = "MihirSoapService";
+
+	private static final String SOAP_ACTION_REGISTRATION = "http://mihirmobile.com/MIHIRSrv/Registration";
+	private static final String SOAP_ACTION_STUDENTMARKS = "http://mihirmobilesolutions.com/MIHIRSrv/StudentMarks";
+	private static final String SOAP_ACTION_FORGOTPASSWORD = "http://mihirmobilesolutions.com/MIHIRSrv/ForgotPassword";
+	private static final String SOAP_ACTION_CHANGEPASSWORD = "http://mihirmobilesolutions.com/MIHIRSrv/ChangePassword";
+	private static final String SOAP_ACTION_RAGGINGCOMPLAINT = "http://mihirmobilesolutions.com/MIHIRSrv/RaggingComplaint";
+	private static final String SOAP_ACTION_AUTHENTICATE = "http://mihirmobile.com/MIHIRSrv/Authenticate";
+	private static final String SOAP_ACTION_FINDCANTEENS = "http://mihirmobile.com/MIHIRSrv/FindCanteens";
+	private static final String SOAP_ACTION_VIEWCANTEENMENU = "http://mihirmobile.com/MIHIRSrv/ViewCanteenMenu";
+	private static final String  SOAP_ACTION_ORDER_ITEMS = "http://mihirmobile.com/MIHIRSrv/OrderItem";
+	private static final String SOAP_ACTION_ASSIGNMENTS="http://mihirmobile.com/MIHIRSrv/Assignment";
+	private static final String SOAP_ACTION_ATTENDANCE="http://mihirmobile.com/MIHIRSrv/Attendance";
+	
+	private static SoapObject callWebService(String actionName,
+			SoapObject request) throws Exception {
+
+		SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+				SoapEnvelope.VER11);
+		envelope.setOutputSoapObject(request);
+		envelope.dotNet = false;
+		envelope.bodyOut = request;
+		envelope.encodingStyle = SoapSerializationEnvelope.XSD;
+
+		HttpTransportSE httpTransportSE = new HttpTransportSE(URL);
+		httpTransportSE.debug = true;
+		httpTransportSE.call(actionName, envelope);
+		
+		Log.v("request", httpTransportSE.requestDump
+				+ envelope.bodyIn.toString());
+
+		return (SoapObject) envelope.bodyIn;
+	}
+
+	public static SoapObject sendregisterRequest(String email, String mobileNo) {
+
+		SoapObject results = null;
+		String methodName = "RegisterRequest";
+		String actionName = SOAP_ACTION_REGISTRATION;
+		SoapObject request = new SoapObject(NAMESPACE, methodName);
+
+		PropertyInfo info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "Email";
+		info.setValue(email);
+		request.addProperty(info);
+
+		info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "MobileNumber";
+		info.setValue(mobileNo);
+		request.addProperty(info);
+
+		try {
+			results = callWebService(actionName, request);
+			Log.v(TAG, "" + results.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return results;
+	}
+
+	public static SoapObject sendraggingComplaintRequest(String student_id,
+			List<String> names, String comments) {
+		String s[] = new String[] { "", "", "", "" };
+		int count = names.size();
+		for (int i = 0; i < count; i++) {
+			s[i] = names.get(i);
+		}
+		Log.v(TAG, s[0]);
+		Log.v(TAG, s[1]);
+		Log.v(TAG, s[2]);
+		Log.v(TAG, s[3]);
+		SoapObject results = null;
+		String methodName = "RaggingComplaint";
+		String actionName = SOAP_ACTION_RAGGINGCOMPLAINT;
+		SoapObject request = new SoapObject(NAMESPACE, methodName);
+
+		PropertyInfo info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "StudentID";
+		info.setValue(Integer.parseInt(student_id));
+		request.addProperty(info);
+
+		info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "PersonAgainst1";
+		info.setValue(s[0]);
+		request.addProperty(info);
+
+		info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "PersonAgainst2";
+		info.setValue(s[1]);
+		request.addProperty(info);
+
+		info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "PersonAgainst3";
+		info.setValue(s[2]);
+		request.addProperty(info);
+
+		info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "PersonAgainst4";
+		info.setValue(s[3]);
+		request.addProperty(info);
+
+		info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "Comments";
+		info.setValue(comments);
+		request.addProperty(info);
+
+		try {
+			results = callWebService(actionName, request);
+			Log.v(TAG, "" + results.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+			// return e.toString();
+		}
+		return results;
+	}
+
+	public static SoapObject sendforgotPasswordRequest(String email,
+			String mobileNumber) {
+		SoapObject results = null;
+		String methodName = "ForgotPassword";
+		String actionName = SOAP_ACTION_FORGOTPASSWORD;
+		SoapObject request = new SoapObject(NAMESPACE, methodName);
+
+		PropertyInfo info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "Email";
+		info.setValue(email);
+		request.addProperty(info);
+
+		info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "MobileNumber";
+		info.setValue(mobileNumber);
+		request.addProperty(info);
+
+		try {
+			results = callWebService(actionName, request);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return results;
+	}
+
+	public static SoapObject sendstudentMarksRequest(int studentId) {
+		SoapObject results = null;
+		String methodName = "StudentMarks";
+		String actionName = SOAP_ACTION_STUDENTMARKS;
+		SoapObject request = new SoapObject(NAMESPACE, methodName);
+
+		PropertyInfo info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "StudentID";
+		info.setValue(studentId);
+		request.addProperty(info);
+		try {
+			results = callWebService(actionName, request);
+			Log.v(TAG, results.toString());
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return results;
+	}
+
+	public static SoapObject sendchangePasswordRequest(String email,
+			String mobileno, String oldPwd, String newPwd) {
+		SoapObject results = null;
+		String methodName = "ChangePassword";
+		String actionName = SOAP_ACTION_CHANGEPASSWORD;
+		SoapObject request = new SoapObject(NAMESPACE, methodName);
+
+		PropertyInfo info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "Email";
+		info.setValue(email);
+		request.addProperty(info);
+
+		info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "MobileNumber";
+		info.setValue(mobileno);
+		request.addProperty(info);
+
+		info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "CurrentPassword";
+		info.setValue(oldPwd);
+		request.addProperty(info);
+
+		info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "NewPassword";
+		info.setValue(newPwd);
+		request.addProperty(info);
+
+		try {
+			results = callWebService(actionName, request);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return results;
+	}
+
+	public static SoapObject sendAuthenticateRequest(String email,
+			String password) {
+		SoapObject results = null;
+		String methodName = "Authenticate";
+		String actionName = SOAP_ACTION_AUTHENTICATE;
+		SoapObject requestObject = new SoapObject(NAMESPACE, methodName);
+
+		PropertyInfo info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "Email";
+		info.setValue(email);
+		requestObject.addProperty(info);
+
+		info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "Password";
+		info.setValue(password);
+		requestObject.addProperty(info);
+
+		try {
+			results = callWebService(actionName, requestObject);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return results;
+	}
+
+	public static SoapObject sendFindCanteenRequest(String std_id,
+			String contact_id) {
+		SoapObject results = null;
+		String methodName = "FindCanteens";
+		String actionName = SOAP_ACTION_FINDCANTEENS;
+		SoapObject requestObject = new SoapObject(NAMESPACE, methodName);
+
+		PropertyInfo info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "StudentID";
+		info.setValue(Integer.parseInt(std_id));
+		requestObject.addProperty(info);
+
+		info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "ContactID";
+		info.setValue(Integer.parseInt(contact_id));
+		requestObject.addProperty(info);
+
+		try {
+
+			results = callWebService(actionName, requestObject);
+			Log.v(TAG, "find Cateen Response" + results.toString());
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		return results;
+	}
+
+	public static SoapObject sendViewCanteenMenuRequest(String std_id,
+			String canteen_id) {
+		SoapObject results = null;
+		String methodName = "ViewCanteenMenu";
+		String actionName = SOAP_ACTION_VIEWCANTEENMENU;
+		SoapObject requestObject = new SoapObject(NAMESPACE, methodName);
+
+		PropertyInfo info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "StudentID";
+		info.setValue(Integer.parseInt(std_id));
+		requestObject.addProperty(info);
+
+		info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "CanteenID";
+		info.setValue(Integer.parseInt(canteen_id));
+		requestObject.addProperty(info);
+
+		try {
+			results = callWebService(actionName, requestObject);
+			Log.v(TAG, "View CanteenMenu Response" + results.toString());
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		return results;
+	}
+
+	public static SoapObject orderCanteenItems(int studentId, int canteenId,int itemId, int itemQuantity, String itemComment ){
+		
+		SoapObject results = null;
+		
+		SoapObject request = new SoapObject(NAMESPACE, "OrderItem");
+	
+		PropertyInfo info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "StudentID";
+		info.setValue(studentId);
+		request.addProperty(info);
+		
+		info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "CanteenID";
+		info.setValue(canteenId);
+		request.addProperty(info);
+		
+		SoapObject soapObject = new SoapObject(NAMESPACE, "Items");
+		
+		info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "ItemID";
+		info.setValue(itemId);
+		soapObject.addProperty(info);
+		
+		info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "OrderQuantity";
+		info.setValue(itemQuantity);
+		soapObject.addProperty(info);
+		
+		info = new PropertyInfo();
+		info.namespace = NAMESPACE;
+		info.name = "OrderComment";
+		info.setValue(itemComment);
+		soapObject.addProperty(info);
+//		request.addSoapObject(soapObject);
+		request.addProperty("Items", soapObject);
+		try {
+			Log.v(TAG, "oRDER iTEMS "+request.toString());
+			results = callWebService(SOAP_ACTION_ORDER_ITEMS, request);
+			Log.v(TAG, "Order Items Response" + results.toString());
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		return results;
+	}
+	
+public static SoapObject sendAssignmetnsRequest(String student_id)
+	
+	{
+		SoapObject results=null;
+		String methodName="Assignment";
+		String actionName=SOAP_ACTION_ASSIGNMENTS;
+		SoapObject request=new SoapObject(NAMESPACE, methodName);
+		
+		PropertyInfo info=new PropertyInfo();
+		info.namespace=NAMESPACE;
+		info.name="StudentID";
+		info.setValue(Integer.parseInt(student_id));
+		request.addProperty(info);
+		
+		try
+		{
+			results=callWebService(actionName, request);
+			Log.v(TAG, results.toString());
+			return results;
+		}
+		catch (Exception e) {
+			e.printStackTrace();		
+		}
+		
+		return results;
+	}
+
+public static SoapObject sendAttendanceRequest(String student_Id)
+{
+	SoapObject results=null;
+	String methodName="Attendance";
+	String actionName=SOAP_ACTION_ATTENDANCE;
+	
+	SoapObject requestObject=new SoapObject(NAMESPACE, methodName);
+	
+	PropertyInfo info=new PropertyInfo();
+	info.name="StudentID";
+	info.namespace=NAMESPACE;
+	info.setValue(Integer.parseInt(student_Id));
+	requestObject.addProperty(info);
+	
+	try
+	{
+		results=callWebService(actionName, requestObject);
+		Log.v(TAG, results.toString());
+		
+	}catch (Exception e) {
+		// TODO: handle exception
+	}
+	return results;
+}
+	
+}

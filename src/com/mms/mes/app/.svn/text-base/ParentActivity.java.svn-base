@@ -1,0 +1,62 @@
+package com.logictree.school.app;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.app.ListActivity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
+
+import com.logictree.school.R;
+import com.logictree.school.model.StudentInfo;
+
+public class ParentActivity extends ListActivity implements OnItemClickListener{
+	
+	private static final String TAG = "ParentACtivity";
+	private List<StudentInfo> list;
+	
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.parent_screen);
+		
+		ListView listView=(ListView) findViewById(android.R.id.list);
+		list=new ArrayList<StudentInfo>();
+		list=LoginActivity.studentInfos;
+		Log.v(TAG,"Parent Activity");
+		if(list!=null)
+		{
+			if(list.size()>0)
+			{
+				listView.setAdapter(new ArrayAdapter<StudentInfo>(ParentActivity.this,android.R.layout.simple_list_item_1,list));
+				
+				listView.setOnItemClickListener(ParentActivity.this);
+			}
+		}
+		else
+		{
+			Toast.makeText(this, "No Childrens", Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long arg3) {
+
+		Intent intent=new Intent(this,HomeActivity.class);
+		StudentInfo studentInfo=list.get(pos);
+		Log.v(TAG, "Student ID is:"+studentInfo.getStudentId());
+		Log.v(TAG,"Student Name is:"+studentInfo.getStudentName());
+		MihirApp app=(MihirApp) getApplication();
+		app.setCurStudent(studentInfo);
+		startActivity(intent);
+		
+	}
+
+	
+	
+}

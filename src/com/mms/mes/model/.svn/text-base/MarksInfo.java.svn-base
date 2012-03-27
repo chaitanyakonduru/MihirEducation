@@ -1,0 +1,189 @@
+package com.logictree.school.model;
+
+import org.ksoap2.serialization.SoapObject;
+
+import android.util.Log;
+
+public class MarksInfo {
+
+	private static final String TAG = "Marks Pojo";
+	SoapObject object;
+	public MarksInfo(SoapObject object)
+	{
+		setExamName(object.getAttribute("TermName").toString());
+		int termCount=object.getPropertyCount();
+		Log.v(TAG, ""+termCount);
+		subject1=((SoapObject) object.getProperty(0)).getAttribute("Name").toString();
+		marks1=((SoapObject) object.getProperty(0)).getProperty("Mark").toString();
+		maxMarks1=((SoapObject) object.getProperty(0)).getProperty("MaxMarks").toString();
+		grade1=((SoapObject) object.getProperty(0)).getProperty("Grade").toString();
+		
+		subject2=((SoapObject) object.getProperty(1)).getAttribute("Name").toString();
+		marks2=((SoapObject) object.getProperty(1)).getProperty("Mark").toString();
+		maxMarks2=((SoapObject) object.getProperty(0)).getProperty("MaxMarks").toString();
+		grade2=((SoapObject) object.getProperty(1)).getProperty("Grade").toString();
+		
+		subject3=((SoapObject) object.getProperty(2)).getAttribute("Name").toString();
+		marks3=((SoapObject) object.getProperty(2)).getProperty("Mark").toString();
+		maxMarks3=((SoapObject) object.getProperty(0)).getProperty("MaxMarks").toString();
+		grade3=((SoapObject) object.getProperty(2)).getProperty("Grade").toString();
+		
+		subject4=((SoapObject) object.getProperty(3)).getAttribute("Name").toString();
+		marks4=((SoapObject) object.getProperty(3)).getProperty("Mark").toString();
+		maxMarks4=((SoapObject) object.getProperty(0)).getProperty("MaxMarks").toString();
+		grade4=((SoapObject) object.getProperty(3)).getProperty("Grade").toString();
+		
+		subject5=((SoapObject) object.getProperty(4)).getAttribute("Name").toString();
+		marks5=((SoapObject) object.getProperty(4)).getProperty("Mark").toString();
+		maxMarks5=((SoapObject) object.getProperty(0)).getProperty("MaxMarks").toString();
+		grade5=((SoapObject) object.getProperty(4)).getProperty("Grade").toString();
+		
+		subject6=((SoapObject) object.getProperty(5)).getAttribute("Name").toString();
+		marks6=((SoapObject) object.getProperty(5)).getProperty("Mark").toString();
+		maxMarks6=((SoapObject) object.getProperty(0)).getProperty("MaxMarks").toString();
+		grade6=((SoapObject) object.getProperty(5)).getProperty("Grade").toString();
+		Log.v(TAG,"Subject 1="+subject1+"Marks1="+marks1);
+		
+	}
+	
+	public String getExamName() {
+		return examName;
+	}
+	public void setExamName(String examName) {
+		this.examName = examName;
+	}
+
+
+	private String examName;
+	public static String getTag() {
+		return TAG;
+	}
+
+	public SoapObject getObject() {
+		return object;
+	}
+
+	public String getSubject1() {
+		return subject1;
+	}
+
+	public String getMarks1() {
+		return marks1;
+	}
+
+	public String getMaxMarks1() {
+		return maxMarks1;
+	}
+
+	public String getSubject2() {
+		return subject2;
+	}
+
+	public String getMarks2() {
+		return marks2;
+	}
+
+	public String getMaxMarks2() {
+		return maxMarks2;
+	}
+
+	public String getSubject3() {
+		return subject3;
+	}
+
+	public String getMarks3() {
+		return marks3;
+	}
+
+	public String getMaxMarks3() {
+		return maxMarks3;
+	}
+
+	public String getSubject4() {
+		return subject4;
+	}
+
+	public String getMarks4() {
+		return marks4;
+	}
+
+	public String getMaxMarks4() {
+		return maxMarks4;
+	}
+
+	public String getSubject5() {
+		return subject5;
+	}
+
+	public String getMarks5() {
+		return marks5;
+	}
+
+	public String getMaxMarks5() {
+		return maxMarks5;
+	}
+
+	public String getSubject6() {
+		return subject6;
+	}
+
+	public String getMarks6() {
+		return marks6;
+	}
+
+	public String getMaxMarks6() {
+		return maxMarks6;
+	}
+
+	public String getGrade1() {
+		return grade1;
+	}
+
+	public String getGrade2() {
+		return grade2;
+	}
+
+	public String getGrade3() {
+		return grade3;
+	}
+
+	public String getGrade4() {
+		return grade4;
+	}
+
+	public String getGrade5() {
+		return grade5;
+	}
+
+	public String getGrade6() {
+		return grade6;
+	}
+
+
+	private String subject1;
+	private String marks1;
+	private String maxMarks1;
+	private String subject2;
+	private String marks2;
+	private String maxMarks2;
+	private String subject3;
+	private String marks3;
+	private String maxMarks3;
+	private String subject4;
+	private String marks4;
+	private String maxMarks4;
+	private String subject5;
+	private String marks5;
+	private String maxMarks5;
+	private String subject6;
+	private String marks6;
+	private String maxMarks6;
+	private String grade1;
+	private String grade2;
+	private String grade3;
+	private String grade4;
+	private String grade5;
+	private String grade6;
+	
+	
+}

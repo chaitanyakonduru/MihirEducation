@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent" android:layout_height="match_parent"
+	android:orientation="horizontal">
+	<LinearLayout android:id="@+id/linearLayout2"
+		android:layout_height="wrap_content" android:orientation="horizontal"
+		android:layout_width="fill_parent" android:layout_marginLeft="5dip" android:layout_marginRight="5dip">
+		<LinearLayout android:id="@+id/LinearLayout01"
+			android:orientation="vertical" android:layout_height="wrap_content"
+			android:paddingLeft="8dip" android:layout_width="234dp">
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="EventTitle"
+				android:textStyle="bold"
+				android:paddingTop="3dip" android:id="@+id/list_layout_tv_eventtitle" android:textColor="#ffffff"></TextView>
+			<TextView android:layout_width="wrap_content"
+				android:paddingTop="3dip" android:layout_height="wrap_content"
+				android:text="Date" android:textStyle="bold"
+				android:id="@+id/list_layout_tv_date" android:textColor="#ffffff"></TextView>
+		</LinearLayout>
+		<LinearLayout android:id="@+id/linearLayout1"
+			android:gravity="right" android:orientation="vertical"
+			android:paddingRight="8sp" android:paddingTop="8sp"
+			android:layout_height="wrap_content" android:layout_width="match_parent">
+			<TextView android:gravity="right" android:layout_width="wrap_content"
+				android:textSize="18sp" android:layout_height="wrap_content"
+				android:text="&gt;" android:textStyle="bold" android:paddingTop="3dip" android:id="@+id/list_layout_tv_greaterthan" android:textColor="#ffffff" android:visibility="gone"></TextView>
+		</LinearLayout>
+	</LinearLayout>
+
+</LinearLayout>
